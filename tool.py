@@ -1,3 +1,4 @@
+from datasets import Dataset
 import difflib
 from sklearn.metrics import precision_score, recall_score, f1_score
 from typing import List, Tuple, Dict, Any
@@ -190,19 +191,120 @@ PRO['第一任务'] = """提取句中最核心包含作者主观评论的指代�
 PRO['第二任务'] = """判断作者对‘评价对象’的主观‘评论内容’内容是否包含仇恨信息，同时提供了‘原句’用于参考。
 如果‘仇恨判断’为是，再进一步判断其是针对何种群体的仇恨‘仇恨类型’（地域/种族/性别/同性恋/其他）,输出JSON格式{'仇恨判断'：‘是/否’，‘仇恨类型’：‘地域/种族/性别/同性恋/其他’}
 """
-
 PRO['第三任务'] = """这里提供了一个句子成分提取任务介绍和示例，你不需要完成这个任务，根据示例的输入和输出去分析的提取过程，分析仅能包含三部分，俚语分析、语义分析、仇恨目标判断。
 **任务介绍**
 从句子中识别出作者表达仇恨的群体或个人。仇恨评论通常带有贬义、侮辱性或歧视性，针对特定群体或个人。
 **示例**
 """
-
-
 PRO['第四任务'] = """这里提供了一个'提取对某目标的仇恨语句'任务介绍和示例，你不需要完成这个任务，根据示例去分析的提取过程，分析仅能包含三部分，俚语分析、语义分析、语句片段提取。
 **任务介绍**
 从'句子'中抽取出作者对'仇恨目标'表达仇恨的关键'仇恨语句片段'
 **示例**
 """
+PRO['3WorkQwenPrompt_instruction_input'] = """<|im_start|>system
+进行'仇恨目标'抽取任务，从句子中抽取作者表达仇恨的群体或个人。仇恨评论通常带有贬义、侮辱性或歧视性，针对特定群体或个人。输出以下段落：俚语分析、语义分析、仇恨目标判断、仇恨目标json输出。<|im_end|>
+<|im_start|>user
+{}<|im_end|>
+<|im_start|>assistant
+"""
+PRO['3WorkQwenPrompt_output'] = """### 分析
+
+1. **俚语分析**：
+{}
+   
+2. **语义分析**：
+{}
+
+3. **仇恨目标判断**：
+{}
+
+4. **仇恨目标JSON输出**：
+```json
+{{
+  "target": {},
+}}
+```<|im_end|>"""
+
+def mergedParagraph(paragraph):
+    temp = ''
+    for i in paragraph:
+        if '三部分' in i:
+            continue
+        temp = temp + '   - ' + i + '\n'
+    return temp
+
+def mergedTarget(target):
+    if '(无明确仇恨目标)' == target:
+        return 'null'
+    elif target[0] == '(':
+        target = target[1:-1].split(',')
+        temp = '['
+        for i in target:
+            temp = temp + '"' + i + '",'
+        temp = temp[:-1] + ']'
+        return temp
+    else:
+        return '"' + target + '"'
+    
+
+
+def dataset_DEAL(WORKFILENAKE,WORK,seed,test_size):
+    def qwen_prompt(content,paragraph_1,paragraph_2,paragraph_3,target,argument=None):
+        if WORK == 3 or WORK == 31:
+            inputs = PRO['3WorkQwenPrompt_instruction_input'].format(content)
+            if WORK == 3:                
+                inputs = inputs + PRO['3WorkQwenPrompt_output'].format(
+                    mergedParagraph(paragraph_1),
+                    mergedParagraph(paragraph_2),
+                    mergedParagraph(paragraph_3),
+                    mergedTarget(target)
+                )
+            return inputs
+        else:
+            print('ERROR: work error')
+            exit(0)
+    def formatting_prompts_func(examples):
+        texts = []
+        for content, paragraph_1, paragraph_2, paragraph_3, target in zip(examples["content"], examples["paragraph_1"], examples["paragraph_2"], examples["paragraph_3"], examples["target"]):
+            text = qwen_prompt(content,paragraph_1,paragraph_2,paragraph_3,target)
+            texts.append(text)
+        return { "text" : texts, }
+    def dataset_work_Qwen(WORKFILENAKE):
+        content = []
+        paragraph_1 = []
+        paragraph_2 = []
+        paragraph_3 = []
+        target = []
+        ids = []
+        if WORK == 3 or WORK == 31:
+            with open(WORKFILENAKE, 'r', encoding='utf-8') as f:
+                line = f.readline()
+                for line in f.readlines():
+                    temp = eval(line.strip())
+                    content.append(temp['content'])
+                    paragraph_1.append(temp['paragraph_1'])
+                    paragraph_2.append(temp['paragraph_2'])
+                    paragraph_3.append(temp['paragraph_3'])
+                    target.append(temp['Target'])
+                    ids.append(temp['id'])
+        # 创建并返回Hugging Face Dataset对象
+        return Dataset.from_dict({
+            "content": content,
+            "paragraph_1": paragraph_1,
+            "paragraph_2": paragraph_2, 
+            "paragraph_3": paragraph_3,
+            "target": target,
+            "id": ids
+        })
+    ## # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #  
+    dataset = dataset_work_Qwen(WORKFILENAKE)    
+    dataset = dataset.map(formatting_prompts_func, batched = True,)
+    # 切分数据集为训练集和验证集
+    if test_size == -1:
+        return dataset, dataset
+    train_test = dataset.train_test_split(test_size=test_size, seed=seed)
+    return train_test['train'], train_test['test']
+    
 
 def assembly_prompt(content,work,isSlang):
     if work == 1:
@@ -231,7 +333,6 @@ def assembly_prompt(content,work,isSlang):
     else:
         print('work error')
     return prompt
-    
 
 # 创建一个可配置代理的OpenAI客户端
 def create_openai_client(api_key, base_url, proxy=None):

@@ -4,3 +4,5 @@ LLM_LIB/
 归档/bert-base-chinese/
 归档/chinese_bert_classifier/
 *.Identifier
+unsloth_compiled_cache/
+outputs/*
