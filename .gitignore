@@ -6,3 +6,4 @@ LLM_LIB/
 *.Identifier
 unsloth_compiled_cache/
 outputs/*
+lora_model/

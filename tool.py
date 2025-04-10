@@ -301,7 +301,7 @@ def dataset_DEAL(WORKFILENAKE,WORK,seed,test_size):
     dataset = dataset.map(formatting_prompts_func, batched = True,)
     # 切分数据集为训练集和验证集
     if test_size == -1:
-        return dataset, dataset
+        return dataset
     train_test = dataset.train_test_split(test_size=test_size, seed=seed)
     return train_test['train'], train_test['test']
     
