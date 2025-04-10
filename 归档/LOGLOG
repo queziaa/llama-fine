@@ -1,0 +1,1915 @@
+BERT: hfl/chinese-macbert-large
+BATCH_SIZE: 64
+LR: 0.0001
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at hfl/chinese-macbert-large and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+/root/miniconda3/lib/python3.12/site-packages/transformers/optimization.py:640: FutureWarning: This implementation of AdamW is deprecated and will be removed in a future version. Use the PyTorch implementation torch.optim.AdamW instead, or set `no_deprecation_warning=True` to disable this warning
+  warnings.warn(
+Epoch 1/10
+----------
+100%|███████████████████████████████████████████████████████████████████████████████████████| 67/67 [00:40<00:00,  1.67it/s]
+Train loss: 0.3428549722059449
+Validation loss: 0.2925308085978031
+F1 Score (Micro): 0.6479
+F1 Score (Macro): 0.5251
+**Exact Match Ratio**: 0.5563
+F1 Score per class:
+  non-hate: 0.6789
+  Region: 0.3636
+  Sexism: 0.7489
+  Racism: 0.7037
+  LGBTQ: 0.6557
+  others: 0.0000
+
+Epoch 2/10
+----------
+100%|███████████████████████████████████████████████████████████████████████████████████████| 67/67 [00:40<00:00,  1.67it/s]
+Train loss: 0.23287090525698306
+Validation loss: 0.2554054483771324
+F1 Score (Micro): 0.7049
+F1 Score (Macro): 0.6540
+**Exact Match Ratio**: 0.5924
+F1 Score per class:
+  non-hate: 0.6290
+  Region: 0.7692
+  Sexism: 0.7810
+  Racism: 0.7442
+  LGBTQ: 0.7302
+  others: 0.2703
+
+Epoch 3/10
+----------
+100%|███████████████████████████████████████████████████████████████████████████████████████| 67/67 [00:40<00:00,  1.67it/s]
+Train loss: 0.1608522071767209
+Validation loss: 0.3064756281673908
+F1 Score (Micro): 0.7101
+F1 Score (Macro): 0.6673
+**Exact Match Ratio**: 0.6242
+F1 Score per class:
+  non-hate: 0.6943
+  Region: 0.7117
+  Sexism: 0.8108
+  Racism: 0.7170
+  LGBTQ: 0.6571
+  others: 0.4127
+
+Epoch 4/10
+----------
+100%|███████████████████████████████████████████████████████████████████████████████████████| 67/67 [00:40<00:00,  1.66it/s]
+Train loss: 0.11884355267037207
+Validation loss: 0.2684849686920643
+F1 Score (Micro): 0.7354
+F1 Score (Macro): 0.6964
+**Exact Match Ratio**: 0.6603
+F1 Score per class:
+  non-hate: 0.7210
+  Region: 0.7597
+  Sexism: 0.8031
+  Racism: 0.7358
+  LGBTQ: 0.7742
+  others: 0.3846
+
+Epoch 5/10
+----------
+100%|███████████████████████████████████████████████████████████████████████████████████████| 67/67 [00:40<00:00,  1.67it/s]
+Train loss: 0.07782825855399246
+Validation loss: 0.3119916394352913
+F1 Score (Micro): 0.7262
+F1 Score (Macro): 0.6732
+**Exact Match Ratio**: 0.6603
+F1 Score per class:
+  non-hate: 0.7330
+  Region: 0.7413
+  Sexism: 0.7791
+  Racism: 0.7345
+  LGBTQ: 0.7600
+  others: 0.2917
+
+Epoch 6/10
+----------
+100%|███████████████████████████████████████████████████████████████████████████████████████| 67/67 [00:40<00:00,  1.67it/s]
+Train loss: 0.052658996503077336
+Validation loss: 0.33977799117565155
+F1 Score (Micro): 0.7362
+F1 Score (Macro): 0.7015
+**Exact Match Ratio**: 0.6688
+F1 Score per class:
+  non-hate: 0.7267
+  Region: 0.7500
+  Sexism: 0.8048
+  Racism: 0.7513
+  LGBTQ: 0.7636
+  others: 0.4127
+
+Epoch 7/10
+----------
+100%|███████████████████████████████████████████████████████████████████████████████████████| 67/67 [00:40<00:00,  1.67it/s]
+Train loss: 0.03553895516070857
+Validation loss: 0.333630645647645
+F1 Score (Micro): 0.7391
+F1 Score (Macro): 0.6963
+**Exact Match Ratio**: 0.6603
+F1 Score per class:
+  non-hate: 0.7352
+  Region: 0.7778
+  Sexism: 0.8203
+  Racism: 0.7351
+  LGBTQ: 0.7458
+  others: 0.3636
+
+Epoch 8/10
+----------
+100%|███████████████████████████████████████████████████████████████████████████████████████| 67/67 [00:40<00:00,  1.66it/s]
+Train loss: 0.025521559432260137
+Validation loss: 0.35911556519567966
+F1 Score (Micro): 0.7403
+F1 Score (Macro): 0.7065
+**Exact Match Ratio**: 0.6773
+F1 Score per class:
+  non-hate: 0.7331
+  Region: 0.7500
+  Sexism: 0.8016
+  Racism: 0.7582
+  LGBTQ: 0.7368
+  others: 0.4590
+
+
+
+
+BERT: google-bert/bert-base-chinese
+BATCH_SIZE: 32
+LR: 2e-05
+DELSIMGOTH: True DELALLOTH: False
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at google-bert/bert-base-chinese and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+Epoch 1/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 129/129 [00:13<00:00,  9.55it/s]
+Train loss: 0.36726908224035604
+Validation loss: 0.24385063747564953
+F1 Score (Micro): 0.7350
+F1 Score (Macro): 0.5849
+**Exact Match Ratio**: 0.6433
+F1 Score per class:
+  non-hate: 0.7641
+  Region: 0.6239
+  Sexism: 0.7751
+  Racism: 0.7865
+  LGBTQ: 0.5600
+  others: 0.0000
+
+Epoch 2/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 129/129 [00:13<00:00,  9.85it/s]
+Train loss: 0.22759260098601497
+Validation loss: 0.21560459434986115
+F1 Score (Micro): 0.7704
+F1 Score (Macro): 0.6787
+**Exact Match Ratio**: 0.6958
+F1 Score per class:
+  non-hate: 0.7884
+  Region: 0.7027
+  Sexism: 0.7960
+  Racism: 0.8066
+  LGBTQ: 0.7119
+  others: 0.2667
+
+Epoch 3/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 129/129 [00:13<00:00,  9.83it/s]
+Train loss: 0.1701079492652139
+Validation loss: 0.2109970380862554
+F1 Score (Micro): 0.7737
+F1 Score (Macro): 0.7049
+**Exact Match Ratio**: 0.7046
+F1 Score per class:
+  non-hate: 0.7817
+  Region: 0.7669
+  Sexism: 0.8037
+  Racism: 0.7778
+  LGBTQ: 0.7241
+  others: 0.3750
+
+Epoch 4/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 129/129 [00:13<00:00,  9.81it/s]
+Train loss: 0.1267776251301285
+Validation loss: 0.2225236694018046
+F1 Score (Micro): 0.7656
+F1 Score (Macro): 0.6862
+**Exact Match Ratio**: 0.7046
+F1 Score per class:
+  non-hate: 0.7701
+  Region: 0.7626
+  Sexism: 0.7810
+  Racism: 0.7869
+  LGBTQ: 0.7500
+  others: 0.2667
+
+Epoch 5/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 129/129 [00:13<00:00,  9.79it/s]
+Train loss: 0.09569377255763194
+Validation loss: 0.2502885768810908
+F1 Score (Micro): 0.7513
+F1 Score (Macro): 0.6554
+**Exact Match Ratio**: 0.6849
+F1 Score per class:
+  non-hate: 0.7235
+  Region: 0.7299
+  Sexism: 0.7876
+  Racism: 0.8272
+  LGBTQ: 0.7213
+  others: 0.1429
+
+Epoch 6/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 129/129 [00:13<00:00,  9.75it/s]
+Train loss: 0.07487563032281491
+Validation loss: 0.25661651194095614
+F1 Score (Micro): 0.7595
+F1 Score (Macro): 0.6918
+**Exact Match Ratio**: 0.7090
+F1 Score per class:
+  non-hate: 0.7789
+  Region: 0.7480
+  Sexism: 0.7678
+  Racism: 0.7640
+  LGBTQ: 0.6923
+  others: 0.4000
+
+Epoch 7/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 129/129 [00:13<00:00,  9.74it/s]
+Train loss: 0.060604698161861696
+Validation loss: 0.26257513960202533
+F1 Score (Micro): 0.7556
+F1 Score (Macro): 0.7085
+**Exact Match Ratio**: 0.6980
+F1 Score per class:
+  non-hate: 0.7553
+  Region: 0.7538
+  Sexism: 0.7736
+  Racism: 0.7735
+  LGBTQ: 0.7241
+  others: 0.4706
+
+Epoch 8/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 129/129 [00:13<00:00,  9.79it/s]
+Train loss: 0.0503220922032068
+Validation loss: 0.2703898698091507
+F1 Score (Micro): 0.7600
+F1 Score (Macro): 0.7069
+**Exact Match Ratio**: 0.7002
+F1 Score per class:
+  non-hate: 0.7521
+  Region: 0.7259
+  Sexism: 0.7870
+  Racism: 0.8105
+  LGBTQ: 0.7213
+  others: 0.4444
+
+Epoch 9/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 129/129 [00:13<00:00,  9.74it/s]
+Train loss: 0.044244827442737514
+Validation loss: 0.2747161994377772
+F1 Score (Micro): 0.7549
+F1 Score (Macro): 0.7037
+**Exact Match Ratio**: 0.6958
+F1 Score per class:
+  non-hate: 0.7581
+  Region: 0.7231
+  Sexism: 0.7619
+  Racism: 0.7979
+  LGBTQ: 0.7368
+  others: 0.4444
+
+Epoch 10/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 129/129 [00:13<00:00,  9.76it/s]
+Train loss: 0.040960595950253254
+Validation loss: 0.2754591812690099
+F1 Score (Micro): 0.7616
+F1 Score (Macro): 0.7108
+**Exact Match Ratio**: 0.7002
+F1 Score per class:
+  non-hate: 0.7598
+  Region: 0.7576
+  Sexism: 0.7685
+  Racism: 0.7979
+  LGBTQ: 0.7368
+  others: 0.4444
+
+
+  BERT: hfl/chinese-macbert-large
+BATCH_SIZE: 32
+LR: 2e-05
+DELSIMGOTH: True DELALLOTH: False
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at hfl/chinese-macbert-large and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+Epoch 1/10
+----------
+  0%|                                                                                               | 0/129 [00:00<?, ?it/s]  1%|▋                                                                                      | 1/129 [00:00<01:22,  1.55it/s]
+  2%|██                                                                                     | 3/129 [00:13<09:00,  4.29s/it]
+100%|█████████████████████████████████████████████████████████████████████████████████████| 129/129 [00:55<00:00,  2.34it/s]
+Train loss: 0.3176074933636096
+Validation loss: 0.21604493260383606
+F1 Score (Micro): 0.7342
+F1 Score (Macro): 0.6427
+**Exact Match Ratio**: 0.6586
+F1 Score per class:
+  non-hate: 0.7200
+  Region: 0.7218
+  Sexism: 0.7926
+  Racism: 0.7421
+  LGBTQ: 0.7368
+  others: 0.1429
+
+Epoch 2/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 129/129 [00:42<00:00,  3.02it/s]
+Train loss: 0.1872518189655718
+Validation loss: 0.21822258631388347
+F1 Score (Micro): 0.7688
+F1 Score (Macro): 0.7257
+**Exact Match Ratio**: 0.6958
+F1 Score per class:
+  non-hate: 0.7456
+  Region: 0.7761
+  Sexism: 0.8017
+  Racism: 0.7912
+  LGBTQ: 0.7692
+  others: 0.4706
+
+Epoch 3/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 129/129 [00:42<00:00,  3.00it/s]
+Train loss: 0.1157155825012876
+Validation loss: 0.21701934983332952
+F1 Score (Micro): 0.7811
+F1 Score (Macro): 0.6988
+**Exact Match Ratio**: 0.7199
+F1 Score per class:
+  non-hate: 0.7871
+  Region: 0.7591
+  Sexism: 0.8039
+  Racism: 0.8042
+  LGBTQ: 0.7719
+  others: 0.2667
+
+Epoch 4/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 129/129 [00:42<00:00,  3.01it/s]
+Train loss: 0.07126167542192825
+Validation loss: 0.2381699134906133
+F1 Score (Micro): 0.7980
+F1 Score (Macro): 0.7477
+**Exact Match Ratio**: 0.7330
+F1 Score per class:
+  non-hate: 0.8101
+  Region: 0.7969
+  Sexism: 0.8017
+  Racism: 0.8085
+  LGBTQ: 0.7931
+  others: 0.4762
+
+Epoch 5/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 129/129 [00:42<00:00,  3.01it/s]
+Train loss: 0.04485619902004336
+Validation loss: 0.25166412194569904
+F1 Score (Micro): 0.7996
+F1 Score (Macro): 0.7361
+**Exact Match Ratio**: 0.7418
+F1 Score per class:
+  non-hate: 0.8130
+  Region: 0.7970
+  Sexism: 0.7961
+  Racism: 0.8247
+  LGBTQ: 0.7857
+  others: 0.4000
+
+Epoch 6/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 129/129 [00:42<00:00,  3.01it/s]
+Train loss: 0.031114503546336363
+Validation loss: 0.29709553023179375
+F1 Score (Micro): 0.7767
+F1 Score (Macro): 0.7413
+**Exact Match Ratio**: 0.7002
+F1 Score per class:
+  non-hate: 0.7697
+  Region: 0.7647
+  Sexism: 0.8000
+  Racism: 0.7961
+  LGBTQ: 0.7719
+  others: 0.5455
+
+Epoch 7/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 129/129 [00:42<00:00,  3.01it/s]
+Train loss: 0.021851769619614117
+Validation loss: 0.2824148645003637
+F1 Score (Micro): 0.7951
+F1 Score (Macro): 0.7551
+**Exact Match Ratio**: 0.7352
+F1 Score per class:
+  non-hate: 0.7945
+  Region: 0.8120
+  Sexism: 0.7962
+  Racism: 0.8191
+  LGBTQ: 0.7869
+  others: 0.5217
+
+Epoch 8/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 129/129 [00:42<00:00,  3.01it/s]
+Train loss: 0.01544473184157134
+Validation loss: 0.29172236323356626
+F1 Score (Micro): 0.7910
+F1 Score (Macro): 0.7536
+**Exact Match Ratio**: 0.7287
+F1 Score per class:
+  non-hate: 0.7849
+  Region: 0.7704
+  Sexism: 0.8142
+  Racism: 0.8223
+  LGBTQ: 0.7586
+  others: 0.5714
+
+Epoch 9/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 129/129 [00:42<00:00,  3.01it/s]
+Train loss: 0.0115768703011175
+Validation loss: 0.27963635325431824
+F1 Score (Micro): 0.8029
+F1 Score (Macro): 0.7617
+**Exact Match Ratio**: 0.7374
+F1 Score per class:
+  non-hate: 0.8022
+  Region: 0.8000
+  Sexism: 0.8148
+  Racism: 0.8254
+  LGBTQ: 0.7719
+  others: 0.5556
+
+Epoch 10/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 129/129 [00:42<00:00,  3.01it/s]
+Train loss: 0.01032249573545978
+Validation loss: 0.28438884516557056
+F1 Score (Micro): 0.7967
+F1 Score (Macro): 0.7632
+**Exact Match Ratio**: 0.7287
+F1 Score per class:
+  non-hate: 0.7932
+  Region: 0.7939
+  Sexism: 0.8000
+  Racism: 0.8333
+  LGBTQ: 0.7586
+  others: 0.6000
+
+
+  BERT: hfl/chinese-macbert-large
+BATCH_SIZE: 32
+LR: 2e-05
+DELSIMGOTH: True DELALLOTH: False
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at hfl/chinese-macbert-large and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+Epoch 1/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 128/128 [00:42<00:00,  3.01it/s]
+Train loss: 0.3137936283601448
+Validation loss: 0.23642880618572235
+F1 Score (Micro): 0.7258
+F1 Score (Macro): 0.6538
+**Exact Match Ratio**: 0.6446
+F1 Score per class:
+  non-hate: 0.7386
+  Region: 0.5636
+  Sexism: 0.7623
+  Racism: 0.7565
+  LGBTQ: 0.7941
+  others: 0.3077
+
+Epoch 2/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 128/128 [00:42<00:00,  3.02it/s]
+Train loss: 0.1905527935596183
+Validation loss: 0.22233116527398428
+F1 Score (Micro): 0.7637
+F1 Score (Macro): 0.7004
+**Exact Match Ratio**: 0.6799
+F1 Score per class:
+  non-hate: 0.7475
+  Region: 0.7143
+  Sexism: 0.7967
+  Racism: 0.7822
+  LGBTQ: 0.8286
+  others: 0.3333
+
+Epoch 3/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 128/128 [00:42<00:00,  3.01it/s]
+Train loss: 0.12274884906946681
+Validation loss: 0.23038096527258556
+F1 Score (Micro): 0.7710
+F1 Score (Macro): 0.6926
+**Exact Match Ratio**: 0.7086
+F1 Score per class:
+  non-hate: 0.7872
+  Region: 0.6552
+  Sexism: 0.8158
+  Racism: 0.7729
+  LGBTQ: 0.8169
+  others: 0.3077
+
+Epoch 4/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 128/128 [00:42<00:00,  3.01it/s]
+Train loss: 0.07333331039990298
+Validation loss: 0.25362033347288765
+F1 Score (Micro): 0.7627
+F1 Score (Macro): 0.6817
+**Exact Match Ratio**: 0.6998
+F1 Score per class:
+  non-hate: 0.7870
+  Region: 0.6917
+  Sexism: 0.7814
+  Racism: 0.7897
+  LGBTQ: 0.7324
+  others: 0.3077
+
+Epoch 5/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 128/128 [00:42<00:00,  3.01it/s]
+Train loss: 0.050780388570274226
+Validation loss: 0.2741275608539581
+F1 Score (Micro): 0.7758
+F1 Score (Macro): 0.6965
+**Exact Match Ratio**: 0.7130
+F1 Score per class:
+  non-hate: 0.7874
+  Region: 0.7313
+  Sexism: 0.7895
+  Racism: 0.8132
+  LGBTQ: 0.7500
+  others: 0.3077
+
+Epoch 6/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 128/128 [00:42<00:00,  3.01it/s]
+Train loss: 0.035223143771872856
+Validation loss: 0.30303089221318563
+F1 Score (Micro): 0.7651
+F1 Score (Macro): 0.6871
+**Exact Match Ratio**: 0.7042
+F1 Score per class:
+  non-hate: 0.7753
+  Region: 0.6721
+  Sexism: 0.8000
+  Racism: 0.8021
+  LGBTQ: 0.7397
+  others: 0.3333
+
+Epoch 7/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 128/128 [00:42<00:00,  3.01it/s]
+Train loss: 0.024182471206586342
+Validation loss: 0.3100459069013596
+F1 Score (Micro): 0.7672
+F1 Score (Macro): 0.6820
+**Exact Match Ratio**: 0.7064
+F1 Score per class:
+  non-hate: 0.7849
+  Region: 0.7132
+  Sexism: 0.7913
+  Racism: 0.7895
+  LGBTQ: 0.7463
+  others: 0.2667
+
+Epoch 8/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 128/128 [00:42<00:00,  3.01it/s]
+Train loss: 0.017458211033954285
+Validation loss: 0.3149509161710739
+F1 Score (Micro): 0.7738
+F1 Score (Macro): 0.6911
+**Exact Match Ratio**: 0.7152
+F1 Score per class:
+  non-hate: 0.7765
+  Region: 0.7273
+  Sexism: 0.7913
+  Racism: 0.8280
+  LGBTQ: 0.7568
+  others: 0.2667
+
+Epoch 9/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 128/128 [00:42<00:00,  3.01it/s]
+Train loss: 0.013389255942456657
+Validation loss: 0.31118453840414684
+F1 Score (Micro): 0.7854
+F1 Score (Macro): 0.7025
+**Exact Match Ratio**: 0.7241
+F1 Score per class:
+  non-hate: 0.7965
+  Region: 0.7424
+  Sexism: 0.8000
+  Racism: 0.8187
+  LGBTQ: 0.7714
+  others: 0.2857
+
+Epoch 10/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 128/128 [00:42<00:00,  3.01it/s]
+Train loss: 0.01057879269865225
+Validation loss: 0.32015158037344615
+F1 Score (Micro): 0.7764
+F1 Score (Macro): 0.6942
+**Exact Match Ratio**: 0.7174
+F1 Score per class:
+  non-hate: 0.7847
+  Region: 0.7328
+  Sexism: 0.7949
+  Racism: 0.8083
+  LGBTQ: 0.7778
+  others: 0.2667
+
+
+
+
+BERT: hfl/chinese-macbert-large
+BATCH_SIZE: 32
+LR: 2e-05
+DELSIMGOTH: True DELALLOTH: True
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at hfl/chinese-macbert-large and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+Epoch 1/10
+----------
+Train loss: 0.34161678203066487
+Validation loss: 0.2586457441250483
+F1 Score (Micro): 0.7354
+F1 Score (Macro): 0.7345
+**Exact Match Ratio**: 0.6539
+F1 Score per class:
+  non-hate: 0.6734
+  Region: 0.7194
+  Sexism: 0.8216
+  Racism: 0.7416
+  LGBTQ: 0.7164
+
+Epoch 2/10
+----------
+Train loss: 0.1999659729855401
+Validation loss: 0.2375478555758794
+F1 Score (Micro): 0.7689
+F1 Score (Macro): 0.7670
+**Exact Match Ratio**: 0.6964
+F1 Score per class:
+  non-hate: 0.7250
+  Region: 0.7597
+  Sexism: 0.8392
+  Racism: 0.7609
+  LGBTQ: 0.7500
+
+Epoch 3/10
+----------
+Train loss: 0.12449402073608305
+Validation loss: 0.2695750574270884
+F1 Score (Micro): 0.7736
+F1 Score (Macro): 0.7753
+**Exact Match Ratio**: 0.7155
+F1 Score per class:
+  non-hate: 0.7529
+  Region: 0.7576
+  Sexism: 0.8249
+  Racism: 0.7412
+  LGBTQ: 0.8000
+
+Epoch 4/10
+----------
+Train loss: 0.07757584016798134
+Validation loss: 0.2879671265681585
+F1 Score (Micro): 0.7737
+F1 Score (Macro): 0.7757
+**Exact Match Ratio**: 0.7176
+F1 Score per class:
+  non-hate: 0.7662
+  Region: 0.7273
+  Sexism: 0.8133
+  Racism: 0.7571
+  LGBTQ: 0.8148
+
+Epoch 5/10
+----------
+Train loss: 0.04762244455628377
+Validation loss: 0.3060130874315898
+F1 Score (Micro): 0.7829
+F1 Score (Macro): 0.7862
+**Exact Match Ratio**: 0.7197
+F1 Score per class:
+  non-hate: 0.7538
+  Region: 0.7500
+  Sexism: 0.8379
+  Racism: 0.7742
+  LGBTQ: 0.8148
+
+Epoch 6/10
+----------
+Train loss: 0.0297358120280437
+Validation loss: 0.3227090507745743
+F1 Score (Micro): 0.7794
+F1 Score (Macro): 0.7895
+**Exact Match Ratio**: 0.7028
+F1 Score per class:
+  non-hate: 0.7560
+  Region: 0.8000
+  Sexism: 0.8230
+  Racism: 0.7322
+  LGBTQ: 0.8364
+
+Epoch 7/10
+----------
+Train loss: 0.019428752411745097
+Validation loss: 0.3346918980280558
+F1 Score (Micro): 0.7853
+F1 Score (Macro): 0.7939
+**Exact Match Ratio**: 0.7134
+F1 Score per class:
+  non-hate: 0.7523
+  Region: 0.7941
+  Sexism: 0.8279
+  Racism: 0.7676
+  LGBTQ: 0.8276
+
+Epoch 8/10
+----------
+Train loss: 0.013380919530623614
+Validation loss: 0.3440089305241903
+F1 Score (Micro): 0.7895
+F1 Score (Macro): 0.7956
+**Exact Match Ratio**: 0.7197
+F1 Score per class:
+  non-hate: 0.7568
+  Region: 0.7852
+  Sexism: 0.8387
+  Racism: 0.7760
+  LGBTQ: 0.8214
+
+Epoch 9/10
+----------
+Train loss: 0.008633579064468691
+Validation loss: 0.35740791956583656
+F1 Score (Micro): 0.7806
+F1 Score (Macro): 0.7849
+**Exact Match Ratio**: 0.7049
+F1 Score per class:
+  non-hate: 0.7385
+  Region: 0.7852
+  Sexism: 0.8387
+  Racism: 0.7692
+  LGBTQ: 0.7931
+
+Epoch 10/10
+----------
+Train loss: 0.007174622654368667
+Validation loss: 0.3603821277618408
+F1 Score (Micro): 0.7871
+F1 Score (Macro): 0.7894
+**Exact Match Ratio**: 0.7155
+F1 Score per class:
+  non-hate: 0.7523
+  Region: 0.7852
+  Sexism: 0.8379
+  Racism: 0.7784
+  LGBTQ: 0.7931
+
+
+
+  BERT: hfl/chinese-bert-wwm
+BATCH_SIZE: 32
+LR: 2e-05
+DELSIMGOTH: True DELALLOTH: True
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at hfl/chinese-bert-wwm and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+Epoch 1/10
+----------
+Train loss: 0.38262076115697846
+Validation loss: 0.28175075848897296
+F1 Score (Micro): 0.7205
+F1 Score (Macro): 0.7185
+**Exact Match Ratio**: 0.6306
+F1 Score per class:
+  non-hate: 0.6605
+  Region: 0.6769
+  Sexism: 0.8065
+  Racism: 0.7500
+  LGBTQ: 0.6984
+
+Epoch 2/10
+----------
+Train loss: 0.2444316025515248
+Validation loss: 0.25159426430861154
+F1 Score (Micro): 0.7395
+F1 Score (Macro): 0.7274
+**Exact Match Ratio**: 0.6730
+F1 Score per class:
+  non-hate: 0.6907
+  Region: 0.7445
+  Sexism: 0.8097
+  Racism: 0.7624
+  LGBTQ: 0.6296
+
+Epoch 3/10
+----------
+Train loss: 0.17720607511307063
+Validation loss: 0.2761716961860657
+F1 Score (Micro): 0.7404
+F1 Score (Macro): 0.7385
+**Exact Match Ratio**: 0.6667
+F1 Score per class:
+  non-hate: 0.6997
+  Region: 0.7087
+  Sexism: 0.7968
+  Racism: 0.7709
+  LGBTQ: 0.7164
+
+Epoch 4/10
+----------
+Train loss: 0.12578465803561353
+Validation loss: 0.2839417268832525
+F1 Score (Micro): 0.7497
+F1 Score (Macro): 0.7448
+**Exact Match Ratio**: 0.6773
+F1 Score per class:
+  non-hate: 0.7195
+  Region: 0.7536
+  Sexism: 0.7909
+  Racism: 0.7541
+  LGBTQ: 0.7059
+
+Epoch 5/10
+----------
+Train loss: 0.09231174591564595
+Validation loss: 0.3032371123631795
+F1 Score (Micro): 0.7343
+F1 Score (Macro): 0.7252
+**Exact Match Ratio**: 0.6561
+F1 Score per class:
+  non-hate: 0.6971
+  Region: 0.6786
+  Sexism: 0.8130
+  Racism: 0.7487
+  LGBTQ: 0.6885
+
+Epoch 6/10
+----------
+Train loss: 0.06944775663988483
+Validation loss: 0.3088578144709269
+F1 Score (Micro): 0.7534
+F1 Score (Macro): 0.7434
+**Exact Match Ratio**: 0.6858
+F1 Score per class:
+  non-hate: 0.7368
+  Region: 0.7445
+  Sexism: 0.8065
+  Racism: 0.7351
+  LGBTQ: 0.6939
+
+Epoch 7/10
+----------
+Train loss: 0.05418589108980688
+Validation loss: 0.32680536607901256
+F1 Score (Micro): 0.7542
+F1 Score (Macro): 0.7482
+**Exact Match Ratio**: 0.6773
+F1 Score per class:
+  non-hate: 0.7212
+  Region: 0.7576
+  Sexism: 0.8211
+  Racism: 0.7374
+  LGBTQ: 0.7037
+
+Epoch 8/10
+----------
+Train loss: 0.04623750500605071
+Validation loss: 0.3341689626375834
+F1 Score (Micro): 0.7487
+F1 Score (Macro): 0.7450
+**Exact Match Ratio**: 0.6773
+F1 Score per class:
+  non-hate: 0.7152
+  Region: 0.7536
+  Sexism: 0.8178
+  Racism: 0.7213
+  LGBTQ: 0.7170
+
+Epoch 9/10
+----------
+Train loss: 0.03753539131380113
+Validation loss: 0.3353876700003942
+F1 Score (Micro): 0.7625
+F1 Score (Macro): 0.7550
+**Exact Match Ratio**: 0.6943
+F1 Score per class:
+  non-hate: 0.7353
+  Region: 0.7591
+  Sexism: 0.8216
+  Racism: 0.7553
+  LGBTQ: 0.7037
+
+Epoch 10/10
+----------
+Train loss: 0.032824230527407246
+Validation loss: 0.3375653972228368
+F1 Score (Micro): 0.7596
+F1 Score (Macro): 0.7490
+**Exact Match Ratio**: 0.6879
+F1 Score per class:
+  non-hate: 0.7305
+  Region: 0.7626
+  Sexism: 0.8211
+  Racism: 0.7513
+  LGBTQ: 0.6792
+
+  
+BERT: hfl/chinese-roberta-wwm-ext-large
+BATCH_SIZE: 16
+LR: 2e-05
+DELSIMGOTH: True DELALLOTH: True
+
+
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at hfl/chinese-roberta-wwm-ext-large and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+Epoch 1/10
+----------
+ 52%|███████████████████████████████████████████▉                                         | 137/265 [00:26<00:24,  5.24it/s]100%|█████████████████████████████████████████████████████████████████████████████████████| 265/265 [00:50<00:00,  5.23it/s]
+Train loss: 0.29978472663546507
+Validation loss: 0.2637990983823935
+F1 Score (Micro): 0.7251
+F1 Score (Macro): 0.7225
+**Exact Match Ratio**: 0.6476
+F1 Score per class:
+  non-hate: 0.7068
+  Region: 0.6607
+  Sexism: 0.7692
+  Racism: 0.7485
+  LGBTQ: 0.7273
+
+Epoch 2/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 265/265 [00:50<00:00,  5.23it/s]
+Train loss: 0.16077470867982452
+Validation loss: 0.25003473659356434
+F1 Score (Micro): 0.7769
+F1 Score (Macro): 0.7775
+**Exact Match Ratio**: 0.6943
+F1 Score per class:
+  non-hate: 0.7462
+  Region: 0.7838
+  Sexism: 0.8157
+  Racism: 0.7753
+  LGBTQ: 0.7667
+
+Epoch 3/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 265/265 [00:50<00:00,  5.23it/s]
+Train loss: 0.08405237193307225
+Validation loss: 0.29145483697454133
+F1 Score (Micro): 0.7841
+F1 Score (Macro): 0.7749
+**Exact Match Ratio**: 0.7197
+F1 Score per class:
+  non-hate: 0.7817
+  Region: 0.7559
+  Sexism: 0.7966
+  Racism: 0.8095
+  LGBTQ: 0.7308
+
+Epoch 4/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 265/265 [00:50<00:00,  5.23it/s]
+Train loss: 0.04640124320702733
+Validation loss: 0.31221062410622835
+F1 Score (Micro): 0.7777
+F1 Score (Macro): 0.7814
+**Exact Match Ratio**: 0.7070
+F1 Score per class:
+  non-hate: 0.7781
+  Region: 0.7458
+  Sexism: 0.8000
+  Racism: 0.7470
+  LGBTQ: 0.8364
+
+Epoch 5/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 265/265 [00:50<00:00,  5.23it/s]
+Train loss: 0.027845739794649042
+Validation loss: 0.34824431827291846
+F1 Score (Micro): 0.7828
+F1 Score (Macro): 0.7788
+**Exact Match Ratio**: 0.7134
+F1 Score per class:
+  non-hate: 0.7697
+  Region: 0.7943
+  Sexism: 0.8197
+  Racism: 0.7558
+  LGBTQ: 0.7547
+
+Epoch 6/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 265/265 [00:50<00:00,  5.23it/s]
+Train loss: 0.014443196366839814
+Validation loss: 0.3549298632424325
+F1 Score (Micro): 0.7958
+F1 Score (Macro): 0.7958
+**Exact Match Ratio**: 0.7240
+F1 Score per class:
+  non-hate: 0.7781
+  Region: 0.7832
+  Sexism: 0.8353
+  Racism: 0.7821
+  LGBTQ: 0.8000
+
+Epoch 7/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 265/265 [00:50<00:00,  5.23it/s]
+Train loss: 0.007929078923573472
+Validation loss: 0.36211719379449886
+F1 Score (Micro): 0.7908
+F1 Score (Macro): 0.7933
+**Exact Match Ratio**: 0.7219
+F1 Score per class:
+  non-hate: 0.7553
+  Region: 0.8000
+  Sexism: 0.8320
+  Racism: 0.7933
+  LGBTQ: 0.7857
+
+Epoch 8/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 265/265 [00:50<00:00,  5.23it/s]
+Train loss: 0.004736277726391014
+Validation loss: 0.3713193846788878
+F1 Score (Micro): 0.7912
+F1 Score (Macro): 0.7908
+**Exact Match Ratio**: 0.7261
+F1 Score per class:
+  non-hate: 0.7651
+  Region: 0.8000
+  Sexism: 0.8353
+  Racism: 0.7760
+  LGBTQ: 0.7778
+
+Epoch 9/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 265/265 [00:50<00:00,  5.23it/s]
+Train loss: 0.003383094241912916
+Validation loss: 0.3765332389390096
+F1 Score (Micro): 0.7954
+F1 Score (Macro): 0.7940
+**Exact Match Ratio**: 0.7282
+F1 Score per class:
+  non-hate: 0.7725
+  Region: 0.7971
+  Sexism: 0.8340
+  Racism: 0.7889
+  LGBTQ: 0.7778
+
+Epoch 10/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 265/265 [00:50<00:00,  5.23it/s]
+Train loss: 0.0029348744435306147
+Validation loss: 0.3771880724389727
+F1 Score (Micro): 0.7933
+F1 Score (Macro): 0.7902
+**Exact Match Ratio**: 0.7261
+F1 Score per class:
+  non-hate: 0.7688
+  Region: 0.7914
+  Sexism: 0.8340
+  Racism: 0.7933
+  LGBTQ: 0.7636
+
+
+
+
+
+  BERT: hfl/chinese-roberta-wwm-ext-large
+BATCH_SIZE: 32
+LR: 2e-05
+DELSIMGOTH: True DELALLOTH: True
+IFSEP: False
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at hfl/chinese-roberta-wwm-ext-large and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+Epoch 1/10
+----------
+Train loss: 0.31331949126451536
+Validation loss: 0.23816099564234416
+F1 Score (Micro): 0.7637
+F1 Score (Macro): 0.7590
+**Exact Match Ratio**: 0.6900
+F1 Score per class:
+  non-hate: 0.7564
+  Region: 0.7576
+  Sexism: 0.8016
+  Racism: 0.7296
+  LGBTQ: 0.7500
+
+Epoch 2/10
+----------
+Train loss: 0.17878976716358858
+Validation loss: 0.24292826453844707
+F1 Score (Micro): 0.7646
+F1 Score (Macro): 0.7518
+**Exact Match Ratio**: 0.6964
+F1 Score per class:
+  non-hate: 0.7601
+  Region: 0.7597
+  Sexism: 0.8016
+  Racism: 0.7439
+  LGBTQ: 0.6939
+
+Epoch 3/10
+----------
+Train loss: 0.09936459737836867
+Validation loss: 0.2539759775002797
+F1 Score (Micro): 0.8021
+F1 Score (Macro): 0.7994
+**Exact Match Ratio**: 0.7346
+F1 Score per class:
+  non-hate: 0.7853
+  Region: 0.8000
+  Sexism: 0.8512
+  Racism: 0.7746
+  LGBTQ: 0.7857
+
+Epoch 4/10
+----------
+Train loss: 0.05605785694337429
+Validation loss: 0.2797453929980596
+F1 Score (Micro): 0.7950
+F1 Score (Macro): 0.7936
+**Exact Match Ratio**: 0.7282
+F1 Score per class:
+  non-hate: 0.7711
+  Region: 0.7838
+  Sexism: 0.8583
+  Racism: 0.7624
+  LGBTQ: 0.7925
+
+Epoch 5/10
+----------
+Train loss: 0.03294979012046093
+Validation loss: 0.29279219011465707
+F1 Score (Micro): 0.7938
+F1 Score (Macro): 0.7973
+**Exact Match Ratio**: 0.7176
+F1 Score per class:
+  non-hate: 0.7801
+  Region: 0.7887
+  Sexism: 0.8374
+  Racism: 0.7568
+  LGBTQ: 0.8235
+
+Epoch 6/10
+----------
+Train loss: 0.020841632910156834
+Validation loss: 0.3251993378003438
+F1 Score (Micro): 0.7894
+F1 Score (Macro): 0.7881
+**Exact Match Ratio**: 0.7176
+F1 Score per class:
+  non-hate: 0.7584
+  Region: 0.7832
+  Sexism: 0.8468
+  Racism: 0.7746
+  LGBTQ: 0.7778
+
+Epoch 7/10
+----------
+Train loss: 0.0142810057421544
+Validation loss: 0.33689328134059904
+F1 Score (Micro): 0.7950
+F1 Score (Macro): 0.7935
+**Exact Match Ratio**: 0.7240
+F1 Score per class:
+  non-hate: 0.7725
+  Region: 0.7971
+  Sexism: 0.8425
+  Racism: 0.7709
+  LGBTQ: 0.7843
+
+Epoch 8/10
+----------
+Train loss: 0.009569566353763404
+Validation loss: 0.3422054827213287
+F1 Score (Micro): 0.7966
+F1 Score (Macro): 0.7948
+**Exact Match Ratio**: 0.7261
+F1 Score per class:
+  non-hate: 0.7725
+  Region: 0.7971
+  Sexism: 0.8492
+  Racism: 0.7709
+  LGBTQ: 0.7843
+
+Epoch 9/10
+----------
+Train loss: 0.006676351663803584
+Validation loss: 0.3487158268690109
+F1 Score (Micro): 0.7921
+F1 Score (Macro): 0.7877
+**Exact Match Ratio**: 0.7219
+F1 Score per class:
+  non-hate: 0.7715
+  Region: 0.7914
+  Sexism: 0.8492
+  Racism: 0.7571
+  LGBTQ: 0.7692
+
+Epoch 10/10
+----------
+Train loss: 0.005693715711691438
+Validation loss: 0.3513974358638128
+F1 Score (Micro): 0.7874
+F1 Score (Macro): 0.7775
+**Exact Match Ratio**: 0.7155
+F1 Score per class:
+  non-hate: 0.7625
+  Region: 0.7971
+  Sexism: 0.8492
+  Racism: 0.7586
+  LGBTQ: 0.7200
+
+
+
+
+
+  		BERT: hfl/chinese-roberta-wwm-ext
+		BATCH_SIZE: 32
+		LR: 2e-05
+		DELSIMGOTH: True DELALLOTH: True
+		/usr/local/lib/python3.11/dist-packages/huggingface_hub/utils/_auth.py:94: UserWarning: 
+		The secret `HF_TOKEN` does not exist in your Colab secrets.
+		To authenticate with the Hugging Face Hub, create a token in your settings tab (https://huggingface.co/settings/tokens), set it as secret in your Google Colab and restart your session.
+		You will be able to reuse this secret in all of your noteb…r datasets.
+…		  Racism: 0.7543
+		  LGBTQ: 0.7925
+	text/plain
+		tokenizer_config.json:   0%|          | 0.00/19.0 [00:00<?, ?B/s]
+		vocab.txt:   0%|          | 0.00/110k [00:00<?, ?B/s]
+		added_tokens.json:   0%|          | 0.00/2.00 [00:00<?, ?B/s]
+		special_tokens_map.json:   0%|          | 0.00/112 [00:00<?, ?B/s]
+		tokenizer.json:   0%|          | 0.00/269k [00:00<?, ?B/s]
+		config.json:   0%|          | 0.00/689 [00:00<?, ?B/s]
+		pytorch_model.bin:   0%|          | 0.00/412M [00:00<?, ?B/s]
+
+
+
+
+        BERT: uer/albert-base-chinese-cluecorpussmall
+BATCH_SIZE: 32
+LR: 2e-05
+DELSIMGOTH: True DELALLOTH: True
+IFSEP: False
+/usr/local/lib/python3.11/dist-packages/huggingface_hub/utils/_auth.py:94: UserWarning: 
+The secret `HF_TOKEN` does not exist in your Colab secrets.
+To authenticate with the Hugging Face Hub, create a token in your settings tab (https://huggingface.co/settings/tokens), set it as secret in your Google Colab and restart your session.
+You will be able to reuse this secret in all of your notebooks.
+Please note that authentication is recommended but still optional to access public models or datasets.
+  warnings.warn(
+tokenizer_config.json: 100%
+ 216/216 [00:00<00:00, 4.21kB/s]
+vocab.txt: 100%
+ 110k/110k [00:00<00:00, 1.74MB/s]
+special_tokens_map.json: 100%
+ 112/112 [00:00<00:00, 3.42kB/s]
+config.json: 100%
+ 727/727 [00:00<00:00, 19.3kB/s]
+You are using a model of type albert to instantiate a model of type bert. This is not supported for all configurations of models and can yield errors.
+pytorch_model.bin: 100%
+ 40.3M/40.3M [00:00<00:00, 85.4MB/s]
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+model.safetensors: 100%
+ 40.3M/40.3M [00:00<00:00, 74.9MB/s]
+Epoch 1/10
+----------
+
+Train loss: 0.4430880492791197
+Validation loss: 0.3511141002178192
+F1 Score (Micro): 0.5755
+F1 Score (Macro): 0.5467
+**Exact Match Ratio**: 0.4501
+F1 Score per class:
+  non-hate: 0.4772
+  Region: 0.4200
+  Sexism: 0.7360
+  Racism: 0.6296
+  LGBTQ: 0.4706
+
+Epoch 2/10
+----------
+Train loss: 0.31848831530800437
+Validation loss: 0.31508753101030984
+F1 Score (Micro): 0.6371
+F1 Score (Macro): 0.6198
+**Exact Match Ratio**: 0.5329
+F1 Score per class:
+  non-hate: 0.5908
+  Region: 0.5179
+  Sexism: 0.7541
+  Racism: 0.6545
+  LGBTQ: 0.5818
+
+Epoch 3/10
+----------
+Train loss: 0.2753093457759771
+Validation loss: 0.31803582509358724
+F1 Score (Micro): 0.6463
+F1 Score (Macro): 0.6426
+**Exact Match Ratio**: 0.5584
+F1 Score per class:
+  non-hate: 0.5527
+  Region: 0.6479
+  Sexism: 0.7304
+  Racism: 0.7000
+  LGBTQ: 0.5818
+
+Epoch 4/10
+----------
+Train loss: 0.23643792594285837
+Validation loss: 0.30382581452528634
+F1 Score (Micro): 0.6602
+F1 Score (Macro): 0.6605
+**Exact Match Ratio**: 0.5881
+F1 Score per class:
+  non-hate: 0.6012
+  Region: 0.6299
+  Sexism: 0.7603
+  Racism: 0.6554
+  LGBTQ: 0.6557
+
+Epoch 5/10
+----------
+Train loss: 0.21072494815614887
+Validation loss: 0.3227531393369039
+F1 Score (Micro): 0.6588
+F1 Score (Macro): 0.6480
+**Exact Match Ratio**: 0.5945
+F1 Score per class:
+  non-hate: 0.6387
+  Region: 0.6269
+  Sexism: 0.7468
+  Racism: 0.6174
+  LGBTQ: 0.6102
+
+Epoch 6/10
+----------
+Train loss: 0.1873352522016468
+Validation loss: 0.3247048477331797
+F1 Score (Micro): 0.6694
+F1 Score (Macro): 0.6537
+**Exact Match Ratio**: 0.5987
+F1 Score per class:
+  non-hate: 0.6201
+  Region: 0.6509
+  Sexism: 0.7854
+  Racism: 0.6460
+  LGBTQ: 0.5660
+
+Epoch 7/10
+----------
+Train loss: 0.15941690239018963
+Validation loss: 0.35453496873378754
+F1 Score (Micro): 0.6534
+F1 Score (Macro): 0.6588
+**Exact Match Ratio**: 0.5648
+F1 Score per class:
+  non-hate: 0.5019
+  Region: 0.6946
+  Sexism: 0.7675
+  Racism: 0.6531
+  LGBTQ: 0.6769
+
+Epoch 8/10
+----------
+Train loss: 0.13774997617741278
+Validation loss: 0.33536108732223513
+F1 Score (Micro): 0.6688
+F1 Score (Macro): 0.6650
+**Exact Match Ratio**: 0.5987
+F1 Score per class:
+  non-hate: 0.6462
+  Region: 0.6167
+  Sexism: 0.7325
+  Racism: 0.6628
+  LGBTQ: 0.6667
+
+Epoch 9/10
+----------
+Train loss: 0.1170232122609938
+Validation loss: 0.3443168818950653
+F1 Score (Micro): 0.6765
+F1 Score (Macro): 0.6730
+**Exact Match Ratio**: 0.6030
+F1 Score per class:
+  non-hate: 0.6093
+  Region: 0.6525
+  Sexism: 0.7782
+  Racism: 0.6701
+  LGBTQ: 0.6552
+
+Epoch 10/10
+----------
+Train loss: 0.10248626379254169
+Validation loss: 0.3411808172861735
+F1 Score (Micro): 0.6779
+F1 Score (Macro): 0.6736
+**Exact Match Ratio**: 0.6030
+F1 Score per class:
+  non-hate: 0.6465
+  Region: 0.6562
+  Sexism: 0.7500
+  Racism: 0.6595
+  LGBTQ: 0.6557
+
+
+
+
+  BERT: hfl/chinese-roberta-wwm-ext-large
+BATCH_SIZE: 32
+LR: 2e-05
+DELSIMGOTH: True DELALLOTH: True
+IFSEP: False
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at hfl/chinese-roberta-wwm-ext-large and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+Epoch 1/10
+----------
+Train loss: 0.3184636075021629
+Validation loss: 0.24922919571399688
+F1 Score (Micro): 0.7547
+F1 Score (Macro): 0.7367
+**Exact Match Ratio**: 0.6794
+F1 Score per class:
+  non-hate: 0.7443
+  Region: 0.7500
+  Sexism: 0.8235
+  Racism: 0.7125
+  LGBTQ: 0.6531
+
+Epoch 2/10
+----------
+Train loss: 0.1811370905628778
+Validation loss: 0.23980897863705952
+F1 Score (Micro): 0.7666
+F1 Score (Macro): 0.7609
+**Exact Match Ratio**: 0.6858
+F1 Score per class:
+  non-hate: 0.7536
+  Region: 0.7442
+  Sexism: 0.8249
+  Racism: 0.7320
+  LGBTQ: 0.7500
+
+Epoch 3/10
+----------
+Train loss: 0.10277498687120308
+Validation loss: 0.2742822696765264
+F1 Score (Micro): 0.7788
+F1 Score (Macro): 0.7811
+**Exact Match Ratio**: 0.7049
+F1 Score per class:
+  non-hate: 0.7492
+  Region: 0.7832
+  Sexism: 0.8182
+  Racism: 0.7753
+  LGBTQ: 0.7797
+
+Epoch 4/10
+----------
+Train loss: 0.058491882370938934
+Validation loss: 0.28899358709653217
+F1 Score (Micro): 0.7891
+F1 Score (Macro): 0.7970
+**Exact Match Ratio**: 0.7219
+F1 Score per class:
+  non-hate: 0.7464
+  Region: 0.8235
+  Sexism: 0.8443
+  Racism: 0.7640
+  LGBTQ: 0.8070
+
+Epoch 5/10
+----------
+Train loss: 0.036513960002956536
+Validation loss: 0.3175819089015325
+F1 Score (Micro): 0.7764
+F1 Score (Macro): 0.7668
+**Exact Match Ratio**: 0.7006
+F1 Score per class:
+  non-hate: 0.7566
+  Region: 0.8088
+  Sexism: 0.8148
+  Racism: 0.7614
+  LGBTQ: 0.6923
+
+Epoch 6/10
+----------
+Train loss: 0.023263069226833664
+Validation loss: 0.32942710916201273
+F1 Score (Micro): 0.7719
+F1 Score (Macro): 0.7657
+**Exact Match Ratio**: 0.7028
+F1 Score per class:
+  non-hate: 0.7652
+  Region: 0.7634
+  Sexism: 0.8151
+  Racism: 0.7399
+  LGBTQ: 0.7451
+
+Epoch 7/10
+----------
+Train loss: 0.014557977791707543
+Validation loss: 0.3476634869972865
+F1 Score (Micro): 0.7844
+F1 Score (Macro): 0.7868
+**Exact Match Ratio**: 0.7006
+F1 Score per class:
+  non-hate: 0.7593
+  Region: 0.8088
+  Sexism: 0.8203
+  Racism: 0.7598
+  LGBTQ: 0.7857
+
+Epoch 8/10
+----------
+Train loss: 0.010154100530605791
+Validation loss: 0.33953349192937216
+F1 Score (Micro): 0.7852
+F1 Score (Macro): 0.7877
+**Exact Match Ratio**: 0.7091
+F1 Score per class:
+  non-hate: 0.7692
+  Region: 0.7634
+  Sexism: 0.8313
+  Racism: 0.7598
+  LGBTQ: 0.8148
+
+Epoch 9/10
+----------
+Train loss: 0.007966837527132347
+Validation loss: 0.3448976914087931
+F1 Score (Micro): 0.7792
+F1 Score (Macro): 0.7859
+**Exact Match Ratio**: 0.7070
+F1 Score per class:
+  non-hate: 0.7602
+  Region: 0.7634
+  Sexism: 0.8216
+  Racism: 0.7543
+  LGBTQ: 0.8302
+
+Epoch 10/10
+----------
+Train loss: 0.006851926304161884
+Validation loss: 0.34998945891857147
+F1 Score (Micro): 0.7899
+F1 Score (Macro): 0.7917
+**Exact Match Ratio**: 0.7176
+F1 Score per class:
+  non-hate: 0.7715
+  Region: 0.7941
+  Sexism: 0.8313
+  Racism: 0.7614
+  LGBTQ: 0.8000
+
+
+  BERT: BAAI/bge-small-zh-v1.5
+BATCH_SIZE: 32
+LR: 2e-05
+DELSIMGOTH: True DELALLOTH: True
+IFSEP: False
+tokenizer_config.json: 100%
+ 367/367 [00:00<00:00, 30.7kB/s]
+vocab.txt: 100%
+ 110k/110k [00:00<00:00, 4.75MB/s]
+special_tokens_map.json: 100%
+ 125/125 [00:00<00:00, 7.98kB/s]
+tokenizer.json: 100%
+ 439k/439k [00:00<00:00, 22.3MB/s]
+config.json: 100%
+ 776/776 [00:00<00:00, 68.7kB/s]
+model.safetensors: 100%
+ 95.8M/95.8M [00:00<00:00, 194MB/s]
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at BAAI/bge-small-zh-v1.5 and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+Epoch 1/10
+----------
+100%|██████████| 133/133 [00:12<00:00, 10.36it/s]
+Train loss: 0.4658402771429908
+Validation loss: 0.3508766194184621
+F1 Score (Micro): 0.5851
+F1 Score (Macro): 0.5629
+**Exact Match Ratio**: 0.4586
+F1 Score per class:
+  non-hate: 0.5404
+  Region: 0.5179
+  Sexism: 0.6870
+  Racism: 0.6014
+  LGBTQ: 0.4681
+
+Epoch 2/10
+----------
+100%|██████████| 133/133 [00:12<00:00, 10.32it/s]
+Train loss: 0.3228339903560796
+Validation loss: 0.2934638490279516
+F1 Score (Micro): 0.6823
+F1 Score (Macro): 0.6790
+**Exact Match Ratio**: 0.5945
+F1 Score per class:
+  non-hate: 0.6183
+  Region: 0.6446
+  Sexism: 0.7782
+  Racism: 0.7089
+  LGBTQ: 0.6452
+
+Epoch 3/10
+----------
+100%|██████████| 133/133 [00:13<00:00, 10.21it/s]
+Train loss: 0.27266165468477666
+Validation loss: 0.2746322145064672
+F1 Score (Micro): 0.7137
+F1 Score (Macro): 0.7090
+**Exact Match Ratio**: 0.6327
+F1 Score per class:
+  non-hate: 0.6565
+  Region: 0.6667
+  Sexism: 0.8130
+  Racism: 0.7317
+  LGBTQ: 0.6769
+
+Epoch 4/10
+----------
+100%|██████████| 133/133 [00:13<00:00, 10.08it/s]
+Train loss: 0.2423572651201621
+Validation loss: 0.2652456005414327
+F1 Score (Micro): 0.7325
+F1 Score (Macro): 0.7220
+**Exact Match Ratio**: 0.6582
+F1 Score per class:
+  non-hate: 0.7309
+  Region: 0.6617
+  Sexism: 0.7811
+  Racism: 0.7362
+  LGBTQ: 0.7000
+
+Epoch 5/10
+----------
+100%|██████████| 133/133 [00:13<00:00,  9.95it/s]
+Train loss: 0.22354048524135933
+Validation loss: 0.25771462023258207
+F1 Score (Micro): 0.7389
+F1 Score (Macro): 0.7311
+**Exact Match Ratio**: 0.6667
+F1 Score per class:
+  non-hate: 0.7048
+  Region: 0.7000
+  Sexism: 0.8148
+  Racism: 0.7471
+  LGBTQ: 0.6885
+
+Epoch 6/10
+----------
+100%|██████████| 133/133 [00:13<00:00,  9.93it/s]
+Train loss: 0.20334816135858236
+Validation loss: 0.25592717627684275
+F1 Score (Micro): 0.7375
+F1 Score (Macro): 0.7286
+**Exact Match Ratio**: 0.6645
+F1 Score per class:
+  non-hate: 0.7241
+  Region: 0.6720
+  Sexism: 0.7983
+  Racism: 0.7368
+  LGBTQ: 0.7119
+
+Epoch 7/10
+----------
+100%|██████████| 133/133 [00:13<00:00, 10.02it/s]
+Train loss: 0.18877670101653365
+Validation loss: 0.25471440653006233
+F1 Score (Micro): 0.7382
+F1 Score (Macro): 0.7309
+**Exact Match Ratio**: 0.6730
+F1 Score per class:
+  non-hate: 0.7143
+  Region: 0.6667
+  Sexism: 0.8051
+  Racism: 0.7586
+  LGBTQ: 0.7097
+
+Epoch 8/10
+----------
+100%|██████████| 133/133 [00:13<00:00, 10.08it/s]
+Train loss: 0.17974670068886048
+Validation loss: 0.25571600993474325
+F1 Score (Micro): 0.7479
+F1 Score (Macro): 0.7403
+**Exact Match Ratio**: 0.6794
+F1 Score per class:
+  non-hate: 0.7283
+  Region: 0.6970
+  Sexism: 0.8017
+  Racism: 0.7647
+  LGBTQ: 0.7097
+
+Epoch 9/10
+----------
+100%|██████████| 133/133 [00:13<00:00, 10.04it/s]
+Train loss: 0.17192622128509938
+Validation loss: 0.25588641266028084
+F1 Score (Micro): 0.7437
+F1 Score (Macro): 0.7453
+**Exact Match Ratio**: 0.6752
+F1 Score per class:
+  non-hate: 0.7118
+  Region: 0.7234
+  Sexism: 0.7983
+  Racism: 0.7471
+  LGBTQ: 0.7458
+
+Epoch 10/10
+----------
+100%|██████████| 133/133 [00:13<00:00, 10.00it/s]
+Train loss: 0.16983719489404134
+Validation loss: 0.2566301663716634
+F1 Score (Micro): 0.7524
+F1 Score (Macro): 0.7528
+**Exact Match Ratio**: 0.6837
+F1 Score per class:
+  non-hate: 0.7198
+  Region: 0.7376
+  Sexism: 0.8066
+  Racism: 0.7543
+  LGBTQ: 0.7458
+
+
+
+
+  
+
+Some weights of BertForSequenceClassification were not initialized from the model checkpoint at hfl/chinese-roberta-wwm-ext-large and are newly initialized: ['classifier.bias', 'classifier.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+Epoch 1/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 133/133 [01:24<00:00,  1.58it/s]
+Train loss: 0.3456274415541412
+Validation loss: 0.22074550837278367
+F1 Score (Micro): 0.7778
+F1 Score (Macro): 0.7597
+**Exact Match Ratio**: 0.6943
+F1 Score per class:
+  non-hate: 0.7627
+  Region: 0.7619
+  Sexism: 0.8178
+  Racism: 0.8023
+  LGBTQ: 0.6538
+
+Epoch 2/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 133/133 [01:24<00:00,  1.58it/s]
+Train loss: 0.18433074888430143
+Validation loss: 0.20573533028364183
+F1 Score (Micro): 0.7983
+F1 Score (Macro): 0.7751
+**Exact Match Ratio**: 0.7176
+F1 Score per class:
+  non-hate: 0.8022
+  Region: 0.7717
+  Sexism: 0.8385
+  Racism: 0.7831
+  LGBTQ: 0.6800
+
+Epoch 3/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 133/133 [01:24<00:00,  1.58it/s]
+Train loss: 0.11254872927876343
+Validation loss: 0.19067071080207826
+F1 Score (Micro): 0.8238
+F1 Score (Macro): 0.8083
+**Exact Match Ratio**: 0.7665
+F1 Score per class:
+  non-hate: 0.8167
+  Region: 0.8148
+  Sexism: 0.8421
+  Racism: 0.8478
+  LGBTQ: 0.7200
+
+Epoch 4/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 133/133 [01:24<00:00,  1.58it/s]
+Train loss: 0.06859661605125084
+Validation loss: 0.2032730574409167
+F1 Score (Micro): 0.8274
+F1 Score (Macro): 0.8181
+**Exact Match Ratio**: 0.7665
+F1 Score per class:
+  non-hate: 0.8095
+  Region: 0.8369
+  Sexism: 0.8550
+  Racism: 0.8342
+  LGBTQ: 0.7547
+
+Epoch 5/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 133/133 [01:24<00:00,  1.58it/s]
+Train loss: 0.04321681241735928
+Validation loss: 0.225256743033727
+F1 Score (Micro): 0.8294
+F1 Score (Macro): 0.8034
+**Exact Match Ratio**: 0.7707
+F1 Score per class:
+  non-hate: 0.8289
+  Region: 0.8397
+  Sexism: 0.8678
+  Racism: 0.8140
+  LGBTQ: 0.6667
+
+Epoch 6/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 133/133 [01:24<00:00,  1.58it/s]
+Train loss: 0.030179077164178954
+Validation loss: 0.22067062209049862
+F1 Score (Micro): 0.8320
+F1 Score (Macro): 0.8158
+**Exact Match Ratio**: 0.7749
+F1 Score per class:
+  non-hate: 0.8329
+  Region: 0.8333
+  Sexism: 0.8560
+  Racism: 0.8261
+  LGBTQ: 0.7308
+
+Epoch 7/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 133/133 [01:24<00:00,  1.58it/s]
+Train loss: 0.02139572508605127
+Validation loss: 0.22800926715135575
+F1 Score (Micro): 0.8421
+F1 Score (Macro): 0.8302
+**Exact Match Ratio**: 0.7813
+F1 Score per class:
+  non-hate: 0.8387
+  Region: 0.8551
+  Sexism: 0.8696
+  Racism: 0.8242
+  LGBTQ: 0.7636
+
+Epoch 8/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 133/133 [01:24<00:00,  1.58it/s]
+Train loss: 0.015687889412493633
+Validation loss: 0.23601473321517308
+F1 Score (Micro): 0.8354
+F1 Score (Macro): 0.8197
+**Exact Match Ratio**: 0.7707
+F1 Score per class:
+  non-hate: 0.8329
+  Region: 0.8489
+  Sexism: 0.8618
+  Racism: 0.8242
+  LGBTQ: 0.7308
+
+Epoch 9/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 133/133 [01:24<00:00,  1.58it/s]
+Train loss: 0.013391554852793539
+Validation loss: 0.23656033823887507
+F1 Score (Micro): 0.8373
+F1 Score (Macro): 0.8195
+**Exact Match Ratio**: 0.7728
+F1 Score per class:
+  non-hate: 0.8400
+  Region: 0.8382
+  Sexism: 0.8664
+  Racism: 0.8222
+  LGBTQ: 0.7308
+
+Epoch 10/10
+----------
+100%|█████████████████████████████████████████████████████████████████████████████████████| 133/133 [01:24<00:00,  1.58it/s]
+Train loss: 0.011799590616606008
+Validation loss: 0.23913351694742838
+F1 Score (Micro): 0.8404
+F1 Score (Macro): 0.8235
+**Exact Match Ratio**: 0.7771
+F1 Score per class:
+  non-hate: 0.8409
+  Region: 0.8551
+  Sexism: 0.8664
+  Racism: 0.8242
+  LGBTQ: 0.7308
