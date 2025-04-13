@@ -268,7 +268,7 @@ def dataset_DEAL(WORKFILENAKE,WORK,seed,test_size):
         for content, paragraph_1, paragraph_2, paragraph_3, target in zip(examples["content"], examples["paragraph_1"], examples["paragraph_2"], examples["paragraph_3"], examples["target"]):
             text = qwen_prompt(content,paragraph_1,paragraph_2,paragraph_3,target)
             texts.append(text)
-        return { "text" : texts, }
+        return { "prompt" : texts, }
     def dataset_work_Qwen(WORKFILENAKE):
         content = []
         paragraph_1 = []
