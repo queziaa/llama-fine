@@ -41,7 +41,7 @@ def format_reward_func(completions, **kwargs):
         format_title = {0:"俚语分析", 1:"语义分析", 2:"仇恨目标判断", 3:"仇恨目标JSON输出"}
         for i in completion.split("\n"):
             text = i.replace(" ", "").replace("*", "").replace(".", "").split("：")[0]
-            if reward != 4 and text.replace(str(reward + 1), "") == format_title[reward]:
+            if reward < 4 and text.replace(str(reward + 1), "") == format_title[reward]:
                 reward += 1
             elif reward == 4 and not startjson and text == '```json':
                 startjson = True
@@ -58,6 +58,7 @@ def format_reward_func(completions, **kwargs):
             except:
                 pass
         rewards.append(reward / 6)
+    print('format_reward_func', rewards)
     return rewards
 
 def equation_reward_func(completions,target,id,**kwargs):
@@ -69,6 +70,7 @@ def equation_reward_func(completions,target,id,**kwargs):
     for completion in completions:
         startjson = False
         json = ''
+        reward = 0
         for i in completion.split("\n"):
             text = i.replace(" ", "")
             if not startjson and text == '```json':
@@ -80,10 +82,12 @@ def equation_reward_func(completions,target,id,**kwargs):
         if json != '':
             try:
                 json = eval(json)
-                if 'target' in json and json['target'] == target:
+                if 'target' in json and soft_match_score(json['target'], target):
                     reward = 1
             except:
                 pass
+        rewards.append(reward / 1)
+    print('equation_reward_func', rewards)
     return rewards
 
 
