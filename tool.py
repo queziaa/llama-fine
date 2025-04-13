@@ -201,29 +201,7 @@ PRO['第四任务'] = """这里提供了一个'提取对某目标的仇恨语句
 从'句子'中抽取出作者对'仇恨目标'表达仇恨的关键'仇恨语句片段'
 **示例**
 """
-PRO['3WorkQwenPrompt_instruction_input'] = """<|im_start|>system
-进行'仇恨目标'抽取任务，从句子中抽取作者表达仇恨的群体或个人。仇恨评论通常带有贬义、侮辱性或歧视性，针对特定群体或个人。输出以下段落：俚语分析、语义分析、仇恨目标判断、仇恨目标json输出。<|im_end|>
-<|im_start|>user
-{}<|im_end|>
-<|im_start|>assistant
-"""
-PRO['3WorkQwenPrompt_output'] = """### 分析
 
-1. **俚语分析**：
-{}
-   
-2. **语义分析**：
-{}
-
-3. **仇恨目标判断**：
-{}
-
-4. **仇恨目标JSON输出**：
-```json
-{{
-  "target": {},
-}}
-```<|im_end|>"""
 
 def mergedParagraph(paragraph):
     temp = ''
@@ -245,65 +223,68 @@ def mergedTarget(target):
         return temp
     else:
         return '"' + target + '"'
-    
-
 
 def dataset_DEAL(WORKFILENAKE,WORK,seed,test_size):
-    def qwen_prompt(content,paragraph_1,paragraph_2,paragraph_3,target,argument=None):
-        if WORK == 3 or WORK == 31:
-            inputs = PRO['3WorkQwenPrompt_instruction_input'].format(content)
-            if WORK == 3:                
-                inputs = inputs + PRO['3WorkQwenPrompt_output'].format(
-                    mergedParagraph(paragraph_1),
-                    mergedParagraph(paragraph_2),
-                    mergedParagraph(paragraph_3),
-                    mergedTarget(target)
-                )
-            return inputs
-        else:
-            print('ERROR: work error')
-            exit(0)
-    def formatting_prompts_func(examples):
-        texts = []
-        for content, paragraph_1, paragraph_2, paragraph_3, target in zip(examples["content"], examples["paragraph_1"], examples["paragraph_2"], examples["paragraph_3"], examples["target"]):
-            text = qwen_prompt(content,paragraph_1,paragraph_2,paragraph_3,target)
-            texts.append(text)
-        return { "prompt" : texts, }
-    def dataset_work_Qwen(WORKFILENAKE):
-        content = []
-        paragraph_1 = []
-        paragraph_2 = []
-        paragraph_3 = []
-        target = []
-        ids = []
-        if WORK == 3 or WORK == 31:
-            with open(WORKFILENAKE, 'r', encoding='utf-8') as f:
-                line = f.readline()
-                for line in f.readlines():
-                    temp = eval(line.strip())
-                    content.append(temp['content'])
-                    paragraph_1.append(temp['paragraph_1'])
-                    paragraph_2.append(temp['paragraph_2'])
-                    paragraph_3.append(temp['paragraph_3'])
-                    target.append(temp['Target'])
-                    ids.append(temp['id'])
-        # 创建并返回Hugging Face Dataset对象
-        return Dataset.from_dict({
-            "content": content,
-            "paragraph_1": paragraph_1,
-            "paragraph_2": paragraph_2, 
-            "paragraph_3": paragraph_3,
-            "target": target,
-            "id": ids
-        })
-    ## # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #  
-    dataset = dataset_work_Qwen(WORKFILENAKE)    
-    dataset = dataset.map(formatting_prompts_func, batched = True,)
+    l_content = []
+    l_paragraph_1 = []
+    l_paragraph_2 = []
+    l_paragraph_3 = []
+    l_target = []
+    l_ids = []
+    l_prompt = []
+    if WORK == 3 or WORK == 31:
+        with open(WORKFILENAKE, 'r', encoding='utf-8') as f:
+            line = f.readline()
+            for line in f.readlines():
+                temp = eval(line.strip())
+                content = temp['content']
+                l_content.append(content)
+                paragraph_1 = mergedParagraph(temp['paragraph_1'])
+                l_paragraph_1.append(paragraph_1)
+                paragraph_2 = mergedParagraph(temp['paragraph_2'])
+                l_paragraph_2.append(paragraph_2)
+                paragraph_3 = mergedParagraph(temp['paragraph_3'])
+                l_paragraph_3.append(paragraph_3)
+                target = mergedTarget(temp['Target'])
+                l_target.append(target)
+                l_ids.append(temp['id'])
+                prompt_list = []
+                prompt_list.append({
+                    "role": "system",
+                    "content": f"You are a helpful assistant.\n进行仇恨目标抽取任务，从给出的'社交媒体发言'中抽取作者表达仇恨的群体或个人。仇恨评论通常带有贬义、侮辱性或歧视性，针对特定群体或个人。输出以下段落：俚语分析、语义分析、仇恨目标判断、仇恨目标json输出。",
+                })
+                prompt_list.append({
+                    "role": "user",
+                    "content": f"社交媒体发言:{content}",
+                })
+                if WORK == 3:
+                    prompt_list.append({
+                        "role": "assistant",
+                        "content": f'### 分析\n1. **俚语分析**：\n{paragraph_1}\n2. **语义分析**：\n{paragraph_2}\n3. **仇恨目标判断**：\n{paragraph_3}\n4. **仇恨目标JSON输出**：\n```json\n{{\n\t\"target\": {target},\n}}\n```'
+                    })
+                elif WORK == 31:
+                    prompt_list.append({
+                        "role": "assistant",
+                        "content": ''
+                    })
+                l_prompt.append(prompt_list),
+
+    dataset =  Dataset.from_dict({
+        "content": l_content,
+        "paragraph_1": l_paragraph_1,
+        "paragraph_2": l_paragraph_2, 
+        "paragraph_3": l_paragraph_3,
+        "target": l_target,
+        "id": l_ids,
+        "prompt": l_prompt,
+    })
+
     # 切分数据集为训练集和验证集
     if test_size == -1:
         return dataset
-    train_test = dataset.train_test_split(test_size=test_size, seed=seed)
-    return train_test['train'], train_test['test']
+    else:
+        train_test = dataset.train_test_split(test_size=test_size, seed=seed)
+        return train_test['train'], train_test['test']
     
 
 def assembly_prompt(content,work,isSlang):

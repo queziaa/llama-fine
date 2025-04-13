@@ -20,7 +20,6 @@ from transformers import AutoTokenizer
 from transformers.trainer_utils import get_last_checkpoint
 PatchFastRL("GRPO", FastLanguageModel)  # 对 TRL 进行补丁处理
 from trl import GRPOConfig, GRPOTrainer, ModelConfig, TrlParser
-
 # 配置日志记录器
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -33,6 +32,8 @@ handler.setFormatter(
 logger.addHandler(handler)
 
 def format_reward_func(completions, **kwargs):
+    print(len(completions), len(kwargs))
+    print(completions, kwargs)
     return [0,0,0,0]
     """
     格式奖励函数，检查模型输出格式是否匹配: <think>...</think><answer>...</answer>
@@ -68,7 +69,7 @@ def format_reward_func(completions, **kwargs):
     return rewards
 
 # def equation_reward_func(prompts, completions, target, nums, **kwargs):
-def equation_reward_func(prompts, **kwargs):
+def equation_reward_func(completions, **kwargs):
     return [0,0,0,0]
     """
     方程奖励函数，检查计算结果是否正确，数字是否符合使用要求（每个数字只用一次，只使用所提供的数字）
@@ -168,31 +169,16 @@ model = FastLanguageModel.get_peft_model(
     random_state = training_args.seed,  # 设置随机种子
 )
 
-def generate_token(x):
-    r1_prefix = [
-        {
-            "role": "user",
-            "content": f"使用给定的数字 1，创建一个等于 1 的方程。你可以使用基本算术运算（+、-、*、/）一次或多次，但每个数字只能使用一次。在 <think> </think> 标签中展示你的思考过程，并在 <answer> </answer> 标签中返回最终方程，例如 <answer> (1 + 2) / 3 </answer>。在 <think> 标签中逐步思考。",
-        },
-        {
-            "role": "assistant",
-            "content": "让我们逐步解决这个问题。\n<think>",  # 结尾使用 `<think>` 促使模型开始思考
-        },
-    ]
-    # 提示词，continue_final_message=True 表示将提示词中的最后一个消息继续到最终的输出中
-    return {
-        "prompt": tokenizer.apply_chat_template(
-            r1_prefix, tokenize=False, continue_final_message=True
-        ),  
-    }
-
 
 from tool import dataset_DEAL
 seed = 3407
-WORK = 3      #  3:仇恨目标搜索微调  31:仇恨目标奖励微调  
+WORK = 31      #  3:仇恨目标搜索微调  31:仇恨目标奖励微调  
 WORKFILE = 'outputnew_3_CC.json'
 train_dataset = dataset_DEAL(WORKFILE,WORK,seed,test_size=-1)
-# train_dataset = train_dataset.map(lambda x: generate_token(x))
+def generate_r1_prompt(prompt, target):
+    return {"prompt": tokenizer.apply_chat_template(prompt, tokenize=False, continue_final_message=True), "target": target}
+train_dataset = train_dataset.map(lambda x: generate_r1_prompt(x["prompt"], x["target"]))
+
 # 设置 GRPOTrainer
 trainer = GRPOTrainer(
     model = model,
