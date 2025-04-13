@@ -22,10 +22,12 @@ from tqdm import tqdm
 import httpx
 
 
-def soft_match_score(pred_Target , gold_Target, pred_Argument , gold_Argument):
+def soft_match_score(pred_Target , gold_Target, pred_Argument=None, gold_Argument=None):
     target_sim = difflib.SequenceMatcher(None, pred_Target, gold_Target).ratio()
+    if pred_Argument is None or gold_Argument is None:
+        return target_sim > 0.5
     arg_sim = difflib.SequenceMatcher(None, pred_Argument, gold_Argument).ratio()
-    return target_sim >= 0.5 and arg_sim >= 0.5
+    return target_sim > 0.5 and arg_sim > 0.5
 
 ft = {
     'non-hate': 'n',

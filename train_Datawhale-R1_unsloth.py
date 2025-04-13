@@ -14,6 +14,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import List
 from datasets import load_dataset
+from tool import soft_match_score
 # from swanlab.integration.transformers import SwanLabCallback
 # os.environ["SWANLAB_MODE"] = "disabled"
 from transformers import AutoTokenizer
@@ -32,105 +33,57 @@ handler.setFormatter(
 logger.addHandler(handler)
 
 def format_reward_func(completions, **kwargs):
-    print(len(completions), len(kwargs))
-    print(completions, kwargs)
-    return [0,0,0,0]
-    """
-    格式奖励函数，检查模型输出格式是否匹配: <think>...</think><answer>...</answer>
-
-    参数:
-        completions (list[str]): 生成的输出
-    返回:
-        list[float]: 奖励分数
-    """
-    # 初始化奖励列表
     rewards = []
-    # 遍历生成的输出
+    reward = 0
     for completion in completions:
-        try:
-            # 在生成的输出前添加<think>标签，便于后续正则表达式匹配
-            completion = "<think>" + completion
-            if random.random() < 0.1:  # 1% 的概率将生成输出写入文件
-                # 创建生成输出目录（如果不存在）
-                os.makedirs("completion_samples", exist_ok=True)
-                log_file = os.path.join("completion_samples", "completion_samples.txt")
-                with open(log_file, "a") as f:
-                    f.write(f"\n\n==============\n")
-                    f.write(completion)  # 写入生成的输出
-            # 定义正则表达式模式，用于匹配 <think> 和 <answer> 标签
-            regex = r"^<think>([^<]*(?:<(?!/?think>)[^<]*)*)<\/think>\n<answer>([\s\S]*?)<\/answer>$"
-            match = re.search(regex, completion, re.DOTALL)  # 使用正则表达式进行匹配
-            if match is None or len(match.groups()) != 2:
-                rewards.append(0.0)  # 如果格式不正确，奖励为 0
-            else:
-                rewards.append(1.0)  # 如果格式正确，奖励为 1
-        except Exception:
-            rewards.append(0.0)  # 如果发生异常，奖励为 0
+        startjson = False
+        json = ''
+        format_title = {0:"俚语分析", 1:"语义分析", 2:"仇恨目标判断", 3:"仇恨目标JSON输出"}
+        for i in completion.split("\n"):
+            text = i.replace(" ", "").replace("*", "").replace(".", "").split("：")[0]
+            if reward != 4 and text.replace(str(reward + 1), "") == format_title[reward]:
+                reward += 1
+            elif reward == 4 and not startjson and text == '```json':
+                startjson = True
+            elif startjson:
+                if text == '```':
+                    break
+                json += text
+        if json != '':
+            try:
+                json = eval(json)
+                reward += 1
+                if 'target' in json:
+                    reward += 1
+            except:
+                pass
+        rewards.append(reward / 6)
     return rewards
 
-# def equation_reward_func(prompts, completions, target, nums, **kwargs):
-def equation_reward_func(completions, **kwargs):
-    return [0,0,0,0]
-    """
-    方程奖励函数，检查计算结果是否正确，数字是否符合使用要求（每个数字只用一次，只使用所提供的数字）
-
-    参数:
-        completions (list[str]): 生成的输出
-        target (list[str]): 预期的答案
-        nums (list[str]): 可用的数字
-
-    返回:
-        list[float]: 奖励分数
-    """
-    # 初始化奖励列表
+def equation_reward_func(completions,target,id,**kwargs):
+    if len(set(id)) == 1:
+        print("**id-S**")
+    else:
+        print("**id-M**")
     rewards = []
-    # 遍历生成的输出、预期的答案和可用的数字
-    for prompt, completion, gt, numbers in zip(prompts, completions, target, nums):
-        try:
-            # 在生成的输出前添加 <think> 标签，便于后续正则表达式匹配
-            completion = "<think>" + completion
-            # 定义正则表达式模式，用于匹配 <answer> 标签
-            match = re.search(r"<answer>(.*?)<\/answer>", completion)
-            if match is None:
-                rewards.append(0.0)  # 如果没有匹配到 <answer> 标签，奖励为 0
-                continue
-            equation = match.group(1).strip()  # 提取 <answer> 标签中的内容
-            # 提取方程中的所有数字
-            used_numbers = [int(n) for n in re.findall(r"\d+", equation)]
-
-            # 检查所有数字是否被使用且只使用一次
-            if sorted(used_numbers) != sorted(numbers):
-                rewards.append(0.0)
-                continue
-            # 定义允许的字符模式，只允许数字、运算符、括号和空白字符
-            allowed_pattern = r"^[\d+\-*/().\s]+$"
-            if not re.match(allowed_pattern, equation):
-                rewards.append(0.0)  # 如果方程包含不允许的字符，奖励为 0
-                continue
-            # 计算方程的结果
-            result = eval(equation, {"__builtins__": None}, {})
-
-            if random.random() < 0.3:  # 30% 的概率打印出来
-                print('-'*20, f"\nQuestion:\n{prompt}",
-                    f"\nCompletion:\n{completion}", f"\nResult:\n{result}", f"\nTarget:\n{gt}", f"\nNumbers:\n{numbers}")
-            # 检查方程是否正确且与预期答案匹配（误差小于 1e-5）
-            if abs(float(result) - float(gt)) < 1e-5:
-                rewards.append(1.0)  # 如果正确，奖励为 1                
-                # 10% 的概率将成功的样本写入文件
-                if random.random() < 0.10:
-                    # 创建生成输出目录（如果不存在）
-                    os.makedirs("completion_samples", exist_ok=True)
-                    log_file = os.path.join(
-                        "completion_samples", "success_completion_samples.txt"
-                    )
-                    with open(log_file, "a") as f:
-                        f.write(f"\n\n==============\n")
-                        f.write(f"\nQuestion:\n{prompt}\nCompletion:\n{completion}\nResult:\n{result}\nTarget:\n{gt}\nNumbers:\n{numbers}")  # 写入生成的输出
-                    # print('-'*20, f"\nQuestion:\n{prompt}", f"\nCompletion:\n{completion}", f"\nResult:\n{result}", f"\nTarget:\n{gt}", f"\nNumbers:\n{numbers}")
-            else:
-                rewards.append(0.0)  # 如果不正确，奖励为 0
-        except Exception:
-            rewards.append(0.0)  # 如果评估失败，奖励为 0
+    for completion in completions:
+        startjson = False
+        json = ''
+        for i in completion.split("\n"):
+            text = i.replace(" ", "")
+            if not startjson and text == '```json':
+                startjson = True
+            elif startjson:
+                if text == '```':
+                    break
+                json += text
+        if json != '':
+            try:
+                json = eval(json)
+                if 'target' in json and json['target'] == target:
+                    reward = 1
+            except:
+                pass
     return rewards
 
 
