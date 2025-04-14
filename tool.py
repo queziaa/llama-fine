@@ -203,7 +203,29 @@ PRO['第四任务'] = """这里提供了一个'提取对某目标的仇恨语句
 从'句子'中抽取出作者对'仇恨目标'表达仇恨的关键'仇恨语句片段'
 **示例**
 """
+PRO['3WorkQwenPrompt_instruction_input'] = """<|im_start|>system
+进行'仇恨目标'抽取任务，从句子中抽取作者表达仇恨的群体或个人。仇恨评论通常带有贬义、侮辱性或歧视性，针对特定群体或个人。输出以下段落：俚语分析、语义分析、仇恨目标判断、仇恨目标json输出。<|im_end|>
+<|im_start|>user
+{}<|im_end|>
+<|im_start|>assistant
+"""
+PRO['3WorkQwenPrompt_output'] = """### 分析
 
+1. **俚语分析**：
+{}
+   
+2. **语义分析**：
+{}
+
+3. **仇恨目标判断**：
+{}
+
+4. **仇恨目标JSON输出**：
+```json
+{{
+  "target": {},
+}}
+```<|im_end|>"""
 
 def mergedParagraph(paragraph):
     temp = ''
