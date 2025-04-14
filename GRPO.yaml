@@ -1,5 +1,4 @@
-# 模型参数
-model_name_or_path: unsloth/Qwen2.5-1.5B-Instruct-bnb-4bit
+model_name_or_path: SFT
 model_revision: main
 torch_dtype: bfloat16
 lora_r: 64 # Lora 秩数
@@ -7,13 +6,7 @@ lora_alpha: 32
 attn_implementation: flash_attention_2
 bf16: true
 tf32: true
-output_dir: output/Datawhale-R1
-
-# Swanlab 训练流程记录参数
-swanlab: true # 是否开启 Swanlab 
-workspace: queziaa
-project: p1
-experiment_name: t1
+output_dir: GRPO
 
 # 训练参数
 max_steps: 450 # 最大训练步长
@@ -25,7 +18,7 @@ gradient_checkpointing_kwargs:
 learning_rate: 1.0e-5 # 学习率调整为1e-5
 lr_scheduler_type: cosine # 学习率衰减方案
 warmup_ratio: 0.03 # 学习率预热比率（对于整个步长），好用！
-seed: 2025 # 随机种子，方便实验复现
+seed: 42 # 随机种子，方便实验复现
 
 # GRPO 算法参数
 beta: 0.001 # KL 惩罚因子，调整过，参见下文介绍
