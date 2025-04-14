@@ -97,15 +97,12 @@ def equation_reward_func(completions,target,id,**kwargs):
 parser = TrlParser((ModelConfig, GRPOConfig))
 model_args, training_args = (parser.parse_args_and_config())
 
-# 记录模型参数
 logger.info(f"Model parameters {model_args}")
-# 记录训练/评估参数
 logger.info(f"Training/evaluation parameters {training_args}")
 
-# 从预训练模型加载模型和分词器
 model, tokenizer = FastLanguageModel.from_pretrained(
     model_name=model_args.model_name_or_path,  # 模型名称或路径
-    # fast_inference=True,  # 启用 vLLM 快速推理
+    fast_inference=True,  # 启用 vLLM 快速推理
     load_in_4bit=True,  # 是否以 4 位加载模型，False 表示使用 LoRA 16 位
     max_lora_rank=model_args.lora_r,  # 设置 LoRA 的最大秩
     max_seq_length=training_args.max_completion_length,  # 设置最大序列长度
@@ -140,7 +137,6 @@ train_dataset = train_dataset.map(lambda x: generate_r1_prompt(x["prompt"], x["t
 trainer = GRPOTrainer(
     model = model,
     processing_class = tokenizer,
-    # 奖励函数列表，用于计算奖励分数
     reward_funcs=[
         format_reward_func,  # 格式奖励函数
         equation_reward_func,  # 方程奖励函数
@@ -157,7 +153,6 @@ trainer = GRPOTrainer(
 logger.info(
     f'*** Starting training {datetime.now().strftime("%Y-%m-%d %H:%M:%S")} for {training_args.num_train_epochs} epochs***'
 )
-# 训练模型
 train_result = trainer.train()
 
 
