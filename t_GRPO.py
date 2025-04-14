@@ -1,20 +1,9 @@
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
-# python train_Datawhale-R1_unsloth.py --config Datawhale-R1_unsloth.yaml
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 from unsloth import FastLanguageModel, PatchFastRL
 import logging
-import os
-import random
-import re
-from dataclasses import dataclass
 from datetime import datetime
-from typing import List
-from datasets import load_dataset
 from tool import soft_match_score
 # from swanlab.integration.transformers import SwanLabCallback
 # os.environ["SWANLAB_MODE"] = "disabled"
-from transformers import AutoTokenizer
-from transformers.trainer_utils import get_last_checkpoint
 PatchFastRL("GRPO", FastLanguageModel)  # 对 TRL 进行补丁处理
 from trl import GRPOConfig, GRPOTrainer, ModelConfig, TrlParser
 logging.basicConfig(level=logging.INFO)
@@ -24,7 +13,6 @@ handler = logging.StreamHandler()
 handler.setFormatter(
     logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 ) 
-
 logger.addHandler(handler)
 
 def format_reward_func(completions, **kwargs):
@@ -77,17 +65,19 @@ def equation_reward_func(completions,target,id,**kwargs):
         if json != '':
             try:
                 json = eval(json)
-                if 'target' in json and soft_match_score(json['target'], target):
-                    reward = 1
+                if 'target' in json:
+                    reward = mui_target_func(json['target'], target)
             except:
                 pass
         rewards.append(reward / 1)
     print('equation_reward_func', rewards)
     return rewards
 
-
-
-
+def mui_target_func(per,gold):
+    print('per',per)
+    print('gold',gold)
+    # soft_match_score()
+    return 0
 
 parser = TrlParser((ModelConfig, GRPOConfig))
 model_args, training_args = (parser.parse_args_and_config())
@@ -118,7 +108,6 @@ model = FastLanguageModel.get_peft_model(
     random_state = training_args.seed,  # 设置随机种子
 )
 
-
 from tool import dataset_DEAL
 seed = 3407
 WORK = 31      #  3:仇恨目标搜索微调  31:仇恨目标奖励微调  
@@ -128,7 +117,6 @@ def generate_r1_prompt(prompt, target):
     return {"prompt": tokenizer.apply_chat_template(prompt, tokenize=False, continue_final_message=True), "target": target}
 train_dataset = train_dataset.map(lambda x: generate_r1_prompt(x["prompt"], x["target"]))
 
-# 设置 GRPOTrainer
 trainer = GRPOTrainer(
     model = model,
     processing_class = tokenizer,
@@ -141,16 +129,13 @@ trainer = GRPOTrainer(
     # eval_dataset=test_dataset,
 )
 # last_checkpoint = get_checkpoint(training_args)  # 检查最后一个检查点
-# print("Last Checkpoint",last_checkpoint)
-# # 如果检测到检查点且指定从检查点恢复训练，则记录信息
+# print("Last Checkpoint",last_checkpoint) # 如果检测到检查点且指定从检查点恢复训练，则记录信息
 # if last_checkpoint is not None and training_args.resume_from_checkpoint is None:
 #     logger.info(f"Checkpoint detected, resuming training at {last_checkpoint}.")
 logger.info(
     f'*** Starting training {datetime.now().strftime("%Y-%m-%d %H:%M:%S")} for {training_args.num_train_epochs} epochs***'
 )
 train_result = trainer.train()
-
-
 
 
 metrics = train_result.metrics
