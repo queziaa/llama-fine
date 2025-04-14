@@ -21,12 +21,12 @@ def format_reward_func(completions, **kwargs):
     for completion in completions:
         startjson = False
         json = ''
-        format_title = {0:"俚语分析", 1:"语义分析", 2:"仇恨目标判断", 3:"仇恨目标JSON输出"}
+        format_title = {0:"俚语分析", 1:"语义分析", 2:"仇恨目标判断"}
         for i in completion.split("\n"):
             text = i.replace(" ", "").replace("*", "").replace(".", "").split("：")[0]
-            if reward < 4 and text.replace(str(reward + 1), "") == format_title[reward]:
+            if reward < 2 and text.replace(str(reward + 1), "") == format_title[reward]:
                 reward += 1
-            elif reward == 4 and not startjson and text == '```json':
+            elif reward == 3 and not startjson and text == '```json':
                 startjson = True
             elif startjson:
                 if text == '```':
@@ -40,17 +40,14 @@ def format_reward_func(completions, **kwargs):
                     reward += 1
             except:
                 pass
-        rewards.append(reward / 6)
+        rewards.append(reward / 5)
     print('format_reward_func', rewards)
     return rewards
 
-def equation_reward_func(completions,target,id,**kwargs):
-    if len(set(id)) == 1:
-        print("**id-S**")
-    else:
-        print("**id-M**")
+def equation_reward_func(completions,**kwargs):
+    targets = kwargs['targets']
     rewards = []
-    for completion in completions:
+    for completion, target in zip(completions, targets):
         startjson = False
         json = ''
         reward = 0

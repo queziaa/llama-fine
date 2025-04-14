@@ -9,3 +9,4 @@ outputs/*
 lora_model/
 wandb/
 unlock-deepseek/
+SFT/
