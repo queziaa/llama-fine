@@ -14,14 +14,17 @@ handler.setFormatter(
     logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 ) 
 logger.addHandler(handler)
-
+LOGLOGfilf = open('log.txt', 'a')
 def format_reward_func(completions, **kwargs):
+    LOGLOGfilf.write(str(completions))
+    target_list = kwargs["target"]
+    pr_target = []
     rewards = []
-    reward = 0
-    for completion in completions:
+    for completion, target in zip(completions, target_list):
         startjson = False
         json = ''
         format_title = {0:"俚语分析", 1:"语义分析", 2:"仇恨目标判断"}
+        reward = 0
         for i in completion.split("\n"):
             text = i.replace(" ", "").replace("*", "").replace(".", "").split("：")[0]
             if reward < 2 and text.replace(str(reward + 1), "") == format_title[reward]:
@@ -38,43 +41,18 @@ def format_reward_func(completions, **kwargs):
                 reward += 1
                 if 'target' in json:
                     reward += 1
+                    reward += mui_target_func(json['target'], target) * 5
+                    pr_target.append(json['target'])
             except:
                 pass
-        rewards.append(reward / 5)
-    print('format_reward_func', rewards)
-    return rewards
-
-def equation_reward_func(completions,**kwargs):
-    targets = kwargs['targets']
-    rewards = []
-    for completion, target in zip(completions, targets):
-        startjson = False
-        json = ''
-        reward = 0
-        for i in completion.split("\n"):
-            text = i.replace(" ", "")
-            if not startjson and text == '```json':
-                startjson = True
-            elif startjson:
-                if text == '```':
-                    break
-                json += text
-        if json != '':
-            try:
-                json = eval(json)
-                if 'target' in json:
-                    reward = mui_target_func(json['target'], target)
-            except:
-                pass
-        rewards.append(reward / 1)
+        rewards.append(reward / 10)
+    print('pr_target', pr_target)
+    print('targets', target_list)
     print('equation_reward_func', rewards)
     return rewards
 
 def mui_target_func(per,gold):
-    print('per',per)
-    print('gold',gold)
-    # soft_match_score()
-    return 0
+    return soft_match_score(per, gold)
 
 parser = TrlParser((ModelConfig, GRPOConfig))
 model_args, training_args = (parser.parse_args_and_config())
@@ -119,7 +97,7 @@ trainer = GRPOTrainer(
     processing_class = tokenizer,
     reward_funcs=[
         format_reward_func,  # 格式奖励函数
-        equation_reward_func,  # 方程奖励函数
+        # equation_reward_func,  # 方程奖励函数
     ],
     args=training_args,
     train_dataset=train_dataset,

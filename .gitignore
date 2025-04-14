@@ -10,3 +10,4 @@ lora_model/
 wandb/
 unlock-deepseek/
 SFT/
+log.txt
