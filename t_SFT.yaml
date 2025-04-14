@@ -1,5 +1,5 @@
 # 模型参数
-model_name_or_path: unsloth/Qwen2.5-3B-Instruct-bnb-4bit
+model_name_or_path: unsloth/Qwen2.5-1.5B-Instruct-bnb-4bit
 model_revision: main
 torch_dtype: bfloat16
 lora_r: 64 # Lora 秩数
@@ -33,9 +33,9 @@ optim: adamw_8bit # 优化器, 8bit加速
 max_prompt_length: 256 # 输入 prompt 最大长度，本实验基本不会有太大变化
 max_completion_length: 1024 # 输出回答长度，包含推理思维链
 num_generations: 4
-use_vllm: true # 启用 vllm 来加速推理
-vllm_gpu_memory_utilization: 0.4
-VLLM_USE_V1: 1
+# use_vllm: true # 启用 vllm 来加速推理
+# vllm_gpu_memory_utilization: 0.4
+# VLLM_USE_V1: 1
 
 # Logging arguments
 logging_strategy: steps

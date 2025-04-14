@@ -1,7 +1,3 @@
-# https://zhuanlan.zhihu.com/p/8362625598
-# https://github.com/andersonbcdefg/dpo-lora
-# https://zhuanlan.zhihu.com/p/26128254223
-# https://github.com/gulabpatel/LLMs/blob/main/04_trl_SFTTrainer_RewardTrainer_PPO.ipynb
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # python train_Datawhale-R1_unsloth.py --config Datawhale-R1_unsloth.yaml
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
@@ -21,14 +17,13 @@ from transformers import AutoTokenizer
 from transformers.trainer_utils import get_last_checkpoint
 PatchFastRL("GRPO", FastLanguageModel)  # 对 TRL 进行补丁处理
 from trl import GRPOConfig, GRPOTrainer, ModelConfig, TrlParser
-# 配置日志记录器
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 handler = logging.StreamHandler()
 handler.setFormatter(
     logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-)  # 设置日志格式
+) 
 
 logger.addHandler(handler)
 
@@ -102,11 +97,11 @@ logger.info(f"Training/evaluation parameters {training_args}")
 
 model, tokenizer = FastLanguageModel.from_pretrained(
     model_name=model_args.model_name_or_path,  # 模型名称或路径
-    fast_inference=True,  # 启用 vLLM 快速推理
+    # fast_inference=True,  # 启用 vLLM 快速推理
     load_in_4bit=True,  # 是否以 4 位加载模型，False 表示使用 LoRA 16 位
     max_lora_rank=model_args.lora_r,  # 设置 LoRA 的最大秩
     max_seq_length=training_args.max_completion_length,  # 设置最大序列长度
-    gpu_memory_utilization=training_args.vllm_gpu_memory_utilization,  # GPU 内存利用率，若内存不足可减少
+    # gpu_memory_utilization=training_args.vllm_gpu_memory_utilization,  # GPU 内存利用率，若内存不足可减少
     attn_implementation=model_args.attn_implementation, # 设置注意力实现方式 flash attention
 ) 
 
