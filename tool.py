@@ -29,6 +29,86 @@ def soft_match_score(pred_Target , gold_Target, pred_Argument=None, gold_Argumen
     arg_sim = difflib.SequenceMatcher(None, pred_Argument, gold_Argument).ratio()
     return target_sim > 0.5 and arg_sim > 0.5
 
+
+
+def conut_format_reward(completion):
+    startjson = False
+    json = ''
+    format_title = {0:"俚语分析", 1:"语义分析", 2:"仇恨目标判断"}
+    reward = 0
+    for i in completion.split("\n"):
+        text = i.replace(" ", "").replace("*", "").replace(".", "").split("：")[0].replace("#", "")
+        if reward < 2 and text.replace(str(reward + 1), "") == format_title[reward]:
+            reward += 1
+        if not startjson and text == '```json':
+            startjson = True
+        elif startjson:
+            if text == '```':
+                break
+            json += text
+    if json != '':
+        reward += 1
+        if 'target' in json:
+            reward += 1
+    return reward / 5
+
+def conut_reward(completion, target=None):
+    pr_target = -1
+    startjson = False
+    json = ''
+    for i in completion.split("\n"):
+        text = i
+        if not startjson and '```json' in text:
+            startjson = True
+        elif startjson:
+            if '```' in text:
+                break
+            json += text
+    if json != '':
+        try:
+            json = eval(json)
+            if 'target' in json:
+                pr_target = json['target']
+        except:
+            pass
+    if pr_target == -1:
+        return 0, -1
+    if pr_target == '无' or pr_target == None or pr_target == 'null' or '无明确' in pr_target:
+        pr_target = None
+    if 'null' == target:
+        target = None
+    if target[0] == '[':
+        target = eval(target)
+    if target == pr_target:
+        return 1,pr_target
+    if type(pr_target) == dict:
+        return 0 ,pr_target
+    if type(pr_target) == str and type(target) == str:
+        return soft_match_score(json['target'], target),pr_target
+    if type(pr_target) == str:
+         pr_target = [pr_target]
+    if type(target) == str:
+        target = [target]
+    return reward_list(pr_target, target), pr_target
+
+def reward_list(pr_target, target):
+    similarity_matrix = []
+    out = [0] * len(pr_target)
+    for i in range(len(target)):
+        for j in range(len(pr_target)):
+            similarity_matrix.append(soft_match_score(target[i], pr_target[j]))
+
+    while set(similarity_matrix) != {0}:
+        maxindex = similarity_matrix.index(max(similarity_matrix))
+        print(maxindex)
+        max_i = maxindex // len(pr_target)
+        max_j = maxindex % len(pr_target)
+        out[max_j] = similarity_matrix[maxindex]
+        for i in range(len(similarity_matrix)):
+            if i // len(pr_target) == max_i or i % len(pr_target) == max_j:
+                similarity_matrix[i] = 0
+    return sum(out) / len(out)
+
 ft = {
     'non-hate': 'n',
     'hate': 'y',
@@ -203,6 +283,11 @@ PRO['第四任务'] = """这里提供了一个'提取对某目标的仇恨语句
 从'句子'中抽取出作者对'仇恨目标'表达仇恨的关键'仇恨语句片段'
 **示例**
 """
+PRO['第五任务'] = """这里提供了一个'评论片段提取'任务介绍和示例，你不需要完成这个任务，根据示例去分析的提取过程，输出以下分析段落：俚语分析、语义分析、仇恨目标判断、仇恨目标json输出，俚语分析、语义分析、语句片段提取。
+**任务介绍**
+从'社交媒体发言'中提取出作者发表评论的'评论目标'以及对应的'评论片段'。
+**示例**
+"""
 PRO['3WorkQwenPrompt_instruction_input'] = """<|im_start|>system
 进行'仇恨目标'抽取任务，从句子中抽取作者表达仇恨的群体或个人。仇恨评论通常带有贬义、侮辱性或歧视性，针对特定群体或个人。输出以下段落：俚语分析、语义分析、仇恨目标判断、仇恨目标json输出。<|im_end|>
 <|im_start|>user
@@ -248,7 +333,15 @@ def mergedTarget(target):
     else:
         return '"' + target + '"'
 
-def dataset_DEAL(WORKFILENAKE,WORK,seed,test_size):
+def dataset_DEAL(WORKFILENAKE,WORK,seed):
+    lt_content = []
+    lt_paragraph_1 = []
+    lt_paragraph_2 = []
+    lt_paragraph_3 = []
+    lt_target = []
+    lt_ids = []
+    lt_prompt = []
+
     l_content = []
     l_paragraph_1 = []
     l_paragraph_2 = []
@@ -261,21 +354,16 @@ def dataset_DEAL(WORKFILENAKE,WORK,seed,test_size):
             line = f.readline()
             for line in f.readlines():
                 temp = eval(line.strip())
+                id = temp['id']
                 content = temp['content']
-                l_content.append(content)
                 paragraph_1 = mergedParagraph(temp['paragraph_1'])
-                l_paragraph_1.append(paragraph_1)
                 paragraph_2 = mergedParagraph(temp['paragraph_2'])
-                l_paragraph_2.append(paragraph_2)
                 paragraph_3 = mergedParagraph(temp['paragraph_3'])
-                l_paragraph_3.append(paragraph_3)
                 target = mergedTarget(temp['Target'])
-                l_target.append(target)
-                l_ids.append(temp['id'])
                 prompt_list = []
                 prompt_list.append({
                     "role": "system",
-                    "content": f"You are a helpful assistant.\n进行仇恨目标抽取任务，从给出的'社交媒体发言'中抽取作者表达仇恨的群体或个人。仇恨评论通常带有贬义、侮辱性或歧视性，针对特定群体或个人。输出以下段落：俚语分析、语义分析、仇恨目标判断、仇恨目标json输出。",
+                    "content": f"You are a helpful assistant.\n进行仇恨目标抽取任务，从给出的'社交媒体发言'中抽取作者表达仇恨的群体或个人。仇恨评论通常带有贬义、侮辱性或歧视性，针对特定群体或个人。输出以下段落：俚语分析、语义分析、仇恨目标判断、仇恨目标json输出。\njson 模板:\n{{\n\t\"target\": '仇恨目标',\n}}\n",
                 })
                 prompt_list.append({
                     "role": "user",
@@ -291,9 +379,24 @@ def dataset_DEAL(WORKFILENAKE,WORK,seed,test_size):
                         "role": "assistant",
                         "content": ''
                     })
-                l_prompt.append(prompt_list),
+                if ((id + seed)%11==0):
+                    lt_content.append(content)
+                    lt_paragraph_1.append(paragraph_1)
+                    lt_paragraph_2.append(paragraph_2)
+                    lt_paragraph_3.append(paragraph_3)
+                    lt_target.append(target)
+                    lt_ids.append(temp['id'])
+                    lt_prompt.append(prompt_list),
+                else:
+                    l_content.append(content)
+                    l_paragraph_1.append(paragraph_1)
+                    l_paragraph_2.append(paragraph_2)
+                    l_paragraph_3.append(paragraph_3)
+                    l_target.append(target)
+                    l_ids.append(temp['id'])
+                    l_prompt.append(prompt_list),
 
-    dataset =  Dataset.from_dict({
+    tr_dataset =  Dataset.from_dict({
         "content": l_content,
         "paragraph_1": l_paragraph_1,
         "paragraph_2": l_paragraph_2, 
@@ -302,14 +405,16 @@ def dataset_DEAL(WORKFILENAKE,WORK,seed,test_size):
         "id": l_ids,
         "prompt": l_prompt,
     })
-
-    # 切分数据集为训练集和验证集
-    if test_size == -1:
-        return dataset
-    else:
-        train_test = dataset.train_test_split(test_size=test_size, seed=seed)
-        return train_test['train'], train_test['test']
-    
+    ts_dataset = Dataset.from_dict({
+        "content": lt_content,
+        "paragraph_1": lt_paragraph_1,
+        "paragraph_2": lt_paragraph_2, 
+        "paragraph_3": lt_paragraph_3,
+        "target": lt_target,
+        "id": lt_ids,
+        "prompt": lt_prompt,
+    })
+    return tr_dataset, ts_dataset
 
 def assembly_prompt(content,work,isSlang):
     if work == 1:
@@ -335,6 +440,9 @@ def assembly_prompt(content,work,isSlang):
         prompt += ('句子:' + content['content'] + '\n' )
         prompt += ('仇恨目标:' + content['Target'] + '\n' )
         prompt += ('仇恨语句片段:' + content['Argument'] + '\n' )
+    elif work == 5:
+        print('ERRR,废弃')
+        pass
     else:
         print('work error')
     return prompt
@@ -442,6 +550,15 @@ def load_train_byWORKTYPE(filename,WORKTYPY):
                             'Target': i_output['Target'],
                             'Argument': i_output['Argument'],
                         })
+        elif WORKTYPY == 5:
+            datatemp = json.load(file)
+            data = []
+            for i_datatemp in datatemp:
+                output = output_tf(i_datatemp['output'])
+                data.append({
+                    'content': i_datatemp['content'],
+                    'output': output,
+                })
         else:
             raise ValueError("WORKTYPY must be 1 or 2")
     return data

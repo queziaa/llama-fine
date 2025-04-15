@@ -1,7 +1,7 @@
 from unsloth import FastLanguageModel, PatchFastRL
 import logging
 from datetime import datetime
-from tool import soft_match_score
+from tool import soft_match_score,conut_reward,conut_format_reward
 # from swanlab.integration.transformers import SwanLabCallback
 # os.environ["SWANLAB_MODE"] = "disabled"
 PatchFastRL("GRPO", FastLanguageModel)  # 对 TRL 进行补丁处理
@@ -17,42 +17,26 @@ logger.addHandler(handler)
 LOGLOGfilf = open('log.txt', 'a')
 def format_reward_func(completions, **kwargs):
     LOGLOGfilf.write(str(completions))
-    target_list = kwargs["target"]
-    pr_target = []
-    rewards = []
-    for completion, target in zip(completions, target_list):
-        startjson = False
-        json = ''
-        format_title = {0:"俚语分析", 1:"语义分析", 2:"仇恨目标判断"}
-        reward = 0
-        for i in completion.split("\n"):
-            text = i.replace(" ", "").replace("*", "").replace(".", "").split("：")[0]
-            if reward < 2 and text.replace(str(reward + 1), "") == format_title[reward]:
-                reward += 1
-            elif reward == 3 and not startjson and text == '```json':
-                startjson = True
-            elif startjson:
-                if text == '```':
-                    break
-                json += text
-        if json != '':
-            try:
-                json = eval(json)
-                reward += 1
-                if 'target' in json:
-                    reward += 1
-                    reward += mui_target_func(json['target'], target) * 5
-                    pr_target.append(json['target'])
-            except:
-                pass
-        rewards.append(reward / 10)
-    print('pr_target', pr_target)
-    print('targets', target_list)
-    print('equation_reward_func', rewards)
-    return rewards
+    reward_list = []
+    for completion in completions:
+        reward_list.append(conut_format_reward(completion))
+    print('format_reward_func', reward_list)
+    return reward_list
 
-def mui_target_func(per,gold):
-    return soft_match_score(per, gold)
+def equation_reward_func(completions, **kwargs):
+    target_list = kwargs["target"]
+    reward_list = []
+    pr_target_list = []
+    for completion, target in zip(completions, target_list):
+        rw,pr_target = conut_reward(completion, target)
+        pr_target_list.append(pr_target)
+        reward_list.append(rw / 10)
+    print('targets', target_list)
+    print('pr_target_list', pr_target_list)
+    print('equation_reward_func', reward_list)
+    return reward_list
+
+
 
 parser = TrlParser((ModelConfig, GRPOConfig))
 model_args, training_args = (parser.parse_args_and_config())
@@ -97,7 +81,7 @@ trainer = GRPOTrainer(
     processing_class = tokenizer,
     reward_funcs=[
         format_reward_func,  # 格式奖励函数
-        # equation_reward_func,  # 方程奖励函数
+        equation_reward_func,  # 方程奖励函数
     ],
     args=training_args,
     train_dataset=train_dataset,
