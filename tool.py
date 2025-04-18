@@ -160,8 +160,7 @@ def merge(pred_quads,content):
     return result
 
 
-[['默默','沉默'],[3907,4085,2595,1474]]
-
+# [['默默','沉默'],[3907,4085,2595,1474]]
 
 slang_replace = {
 '🐶':'狗',
@@ -169,17 +168,19 @@ slang_replace = {
 '腻哥':'nigger',
 '黑棒':'黑人鸡巴',
 'gun':'滚',
-'默@沉默':'nigger ',
+'默':'nigger ',
 'easy girl':'婊子',
+'田楠':'田园男权,指盲目偏激的男性',
+'嘿':'黑人',
+'杨笠':'女权的网络领袖人物',
+'尼':'nigger',
+'钕':'女',
 '黑s会':'黑社会',
 '亩狗':'母狗',
+'嘿枸':'黑人狗',
 '女quan':'女拳',
 '郭嘉':'国家',
-'执fa':'执法'
-}
-
-
-slang = {
+'执fa':'执法',
 "男拳":"谐音“男权”指极端男权主义者",
 "国男":"中国男性的蔑称",
 "金针菇":"对男性生殖器的蔑称",
@@ -223,12 +224,14 @@ slang = {
 "学伴":"指一社会事件-某学校安排女学生与黑人留学生结伴",
 "接盘":"指女孩年轻时追求浪漫开放的性关系之后想要结婚生子找一个愿意接盘的传统型男人",
 "普信男":"指自以为是的男性",
+'普却信':'指自以为是的男性',
 "仙女":"指展现出极端自我中心双重标准的年轻女性",
 "打拳":"指进行极端的女权主义活动",
 "拳师":"指极端女权主义者",
 "普信女":"指自以为是的女性",
 "女quan":"指极端女权主义者",
 "拳":"指进行性别主义活动",
+'矮姿':'艾滋',
 "铁t":"指女同性恋",
 "az":"指艾滋",
 "艾":"指艾滋",
@@ -247,7 +250,7 @@ slang = {
 '饭桶':'谐音反同',
 '反串':'指网络上假装成对立立场的角色',
 }
-# (其中‘掰弯’指将异性恋转变为同性恋)
+
 
 def add_slang_prompt(content):
     print('已经废弃，已经废弃，已经废弃，已经废弃，已经废弃，已经废弃，已经废弃，已经废弃，已经废弃')
@@ -268,8 +271,6 @@ PRO['第一任务'] = """提取句中最核心包含作者主观评论的指代�
 {'指代': '黑人','评论': '鄙视','是否仇恨': '是'}
 ]
 """
-
-
 PRO['第二任务'] = """判断作者对‘评价对象’的主观‘评论内容’内容是否包含仇恨信息，同时提供了‘原句’用于参考。
 如果‘仇恨判断’为是，再进一步判断其是针对何种群体的仇恨‘仇恨类型’（地域/种族/性别/同性恋/其他）,输出JSON格式{'仇恨判断'：‘是/否’，‘仇恨类型’：‘地域/种族/性别/同性恋/其他’}
 """
@@ -311,7 +312,6 @@ PRO['3WorkQwenPrompt_output'] = """### 分析
   "target": {},
 }}
 ```<|im_end|>"""
-
 def mergedParagraph(paragraph):
     temp = ''
     for i in paragraph:
@@ -341,7 +341,6 @@ def dataset_DEAL(WORKFILENAKE,WORK,seed):
     lt_target = []
     lt_ids = []
     lt_prompt = []
-
     l_content = []
     l_paragraph_1 = []
     l_paragraph_2 = []
@@ -349,53 +348,59 @@ def dataset_DEAL(WORKFILENAKE,WORK,seed):
     l_target = []
     l_ids = []
     l_prompt = []
-    if WORK == 3 or WORK == 31:
-        with open(WORKFILENAKE, 'r', encoding='utf-8') as f:
-            line = f.readline()
-            for line in f.readlines():
-                temp = eval(line.strip())
+    if WORK == 13:
+        with open(WORKFILENAKE, 'r', encoding='utf-8') as file:
+            data = json.load(file)
+            for i in data:
+                temp = i
                 id = temp['id']
                 content = temp['content']
-                paragraph_1 = mergedParagraph(temp['paragraph_1'])
-                paragraph_2 = mergedParagraph(temp['paragraph_2'])
-                paragraph_3 = mergedParagraph(temp['paragraph_3'])
-                target = mergedTarget(temp['Target'])
-                prompt_list = []
-                prompt_list.append({
-                    "role": "system",
-                    "content": f"You are a helpful assistant.\n进行仇恨目标抽取任务，从给出的'社交媒体发言'中抽取作者表达仇恨的群体或个人。仇恨评论通常带有贬义、侮辱性或歧视性，针对特定群体或个人。输出以下段落：俚语分析、语义分析、仇恨目标判断、仇恨目标json输出。\njson 模板:\n{{\n\t\"target\": '仇恨目标',\n}}\n",
-                })
-                prompt_list.append({
-                    "role": "user",
-                    "content": f"社交媒体发言:{content}",
-                })
-                if WORK == 3:
-                    prompt_list.append({
-                        "role": "assistant",
-                        "content": f'### 分析\n1. **俚语分析**：\n{paragraph_1}\n2. **语义分析**：\n{paragraph_2}\n3. **仇恨目标判断**：\n{paragraph_3}\n4. **仇恨目标JSON输出**：\n```json\n{{\n\t\"target\": {target},\n}}\n```'
-                    })
-                elif WORK == 31:
-                    prompt_list.append({
-                        "role": "assistant",
-                        "content": ''
-                    })
-                if ((id + seed)%11==0):
-                    lt_content.append(content)
-                    lt_paragraph_1.append(paragraph_1)
-                    lt_paragraph_2.append(paragraph_2)
-                    lt_paragraph_3.append(paragraph_3)
-                    lt_target.append(target)
-                    lt_ids.append(temp['id'])
-                    lt_prompt.append(prompt_list),
-                else:
-                    l_content.append(content)
-                    l_paragraph_1.append(paragraph_1)
-                    l_paragraph_2.append(paragraph_2)
-                    l_paragraph_3.append(paragraph_3)
-                    l_target.append(target)
-                    l_ids.append(temp['id'])
-                    l_prompt.append(prompt_list),
+                prompt_list = assembly_prompt_dict(id, WORK, content)
+                if prompt_list is None:
+                    continue
+                l_content.append(content)
+                l_ids.append(temp['id'])
+                l_prompt.append(prompt_list)
+        tr_dataset =  Dataset.from_dict({
+            "content": l_content,
+            "id": l_ids,
+            "prompt": l_prompt,
+        })
+        return tr_dataset,None
 
+    with open(WORKFILENAKE, 'r', encoding='utf-8') as f:
+        line = f.readline()
+        for line in f.readlines():
+            temp = eval(line.strip())
+            id = temp['id']
+            content = temp['content']
+            paragraph_1 = mergedParagraph(temp['paragraph_1'])
+            paragraph_2 = mergedParagraph(temp['paragraph_2'])
+            paragraph_3 = mergedParagraph(temp['paragraph_3'])
+            if WORK == 3 or WORK == 31:
+                target = mergedTarget(temp['Target'])
+            else:
+                target = temp['Target']
+            Argument = None
+            if 'Argument' in temp:
+                Argument = temp['Argument']
+            prompt_list = assembly_prompt_dict(id, WORK, content, paragraph_1, paragraph_2, paragraph_3, target,Argument)
+            if ((id + seed)%11==0):
+                lt_content.append(content)
+                lt_paragraph_1.append(paragraph_1)
+                lt_paragraph_2.append(paragraph_2)
+                lt_paragraph_3.append(paragraph_3)
+                lt_target.append(target)
+                lt_ids.append(temp['id'])
+                lt_prompt.append(prompt_list),
+            else:
+                l_content.append(content)
+                l_paragraph_1.append(paragraph_1)
+                l_paragraph_2.append(paragraph_2)
+                l_paragraph_3.append(paragraph_3)
+                l_target.append(target)
+                l_ids.append(temp['id'])
+                l_prompt.append(prompt_list),
     tr_dataset =  Dataset.from_dict({
         "content": l_content,
         "paragraph_1": l_paragraph_1,
@@ -415,6 +420,90 @@ def dataset_DEAL(WORKFILENAKE,WORK,seed):
         "prompt": lt_prompt,
     })
     return tr_dataset, ts_dataset
+
+def assembly_prompt_dict(id, WORK, content, paragraph_1=None, paragraph_2=None, paragraph_3=None, target=None,Argument=None):
+    prompt_list = []
+    if WORK == 3 or WORK == 31:
+        prompt_list.append({
+            # You are a helpful assistant.\n
+            "role": "system",
+            "content": f"进行'仇恨目标'抽取任务，从给出的'社交媒体发言'中抽取作者表达仇恨的群体或个人。仇恨评论通常带有贬义、侮辱性或歧视性，针对特定群体或个人。输出以下段落：俚语分析、语义分析、仇恨目标判断、仇恨目标json输出。\njson 模板:\n{{\n\t\"target\": '仇恨目标',\n}}\n",
+        })
+        prompt_list.append({
+            "role": "user",
+            "content": f"社交媒体发言:{content}",
+        })
+        if WORK == 3:
+            prompt_list.append({
+                "role": "assistant",
+                "content": f'### 分析\n1. **俚语分析**：\n{paragraph_1}\n2. **语义分析**：\n{paragraph_2}\n3. **仇恨目标判断**：\n{paragraph_3}\n4. **仇恨目标JSON输出**：\n```json\n{{\n\t\"target\": {target},\n}}\n```'
+            })
+        elif WORK == 31:
+            prompt_list.append({
+                "role": "assistant",
+                "content": ''
+            })
+    elif WORK == 4 or WORK == 41:
+        prompt_list.append({
+            "role": "system",
+            "content": f"进行'评论片段'抽取任务。从'社交媒体发言'中抽取出作者对'评论目标'表达主观评价的核心片段'评价片段'，输出以下段落：俚语分析、语义分析、评价片段提取、评论片段json输出。\njson 模板:\n{{\n\t\"Argument\": '评价片段',\n}}\n",
+        })
+        prompt_list.append({
+            "role": "user",
+            "content": f"社交媒体发言:{content}\n评论目标:{target}",
+        })
+        if WORK == 4:
+            prompt_list.append({
+                "role": "assistant",
+                "content": f'### 分析\n1. **俚语分析**：\n{paragraph_1}\n2. **语义分析**：\n{paragraph_2}\n3. **评价片段提取**：\n{paragraph_3}\n4. **评论片段json输出**：\n```json\n{{\n\t\"Argument\": {Argument},\n}}\n```'
+            })
+        elif WORK == 41:
+            prompt_list.append({
+                "role": "assistant",
+                "content": ''
+            })
+    elif WORK == 12 or WORK == 121:
+        prompt_list.append({
+            "role": "system",
+            "content": f"进行'俚语分析'任务。从'社交媒体发言'中分析作者使用的俚语",
+        })
+        prompt_list.append({
+            "role": "user",
+            "content": f"社交媒体发言:{content}",
+        })
+        if WORK == 12:
+            prompt_list.append({
+                "role": "assistant",
+                "content": f'**俚语分析**：\n{paragraph_1}'
+            })
+        elif WORK == 121:
+            prompt_list.append({
+                "role": "assistant",
+                "content": ''
+            })
+    elif WORK == 13:
+        prompt_list.append({
+            "role": "system",
+            "content": f"进行'俚语分析'任务。从'社交媒体发言'中分析作者使用的俚语",
+        })
+        prompt_list.append({
+            "role": "user",
+            "content": f"社交媒体发言:{content}",
+        })
+        cout = ''
+        # for k,v in slang_replace:
+        for k, v in slang_replace.items():
+            if k in content:
+                cout += "其中‘" + k + '’是' + v + "\n"
+        if cout == '':
+            return None
+        prompt_list.append({
+            "role": "assistant",
+            "content": f'**俚语分析**：\n{cout}'
+        })
+
+    return prompt_list
+
 
 def assembly_prompt(content,work,isSlang):
     if work == 1:
