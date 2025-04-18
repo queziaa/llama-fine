@@ -30,6 +30,122 @@ def soft_match_score(pred_Target , gold_Target, pred_Argument=None, gold_Argumen
     return target_sim > 0.5 and arg_sim > 0.5
 
 
+class REWARD:
+    def __init__(self):
+        self.ALL = {}
+
+    def key(self, completion):
+        key = completion[:100] + str(len(completion))
+        if key not in self.ALL:
+            self.conut_for(completion,key)
+        return key
+    
+    def conut_for(self, completion,key):
+        startjson = False
+        json = ''
+        format_title = {0:"俚语分析", 1:"语义分析", 2:"仇恨目标判断"}
+        reward = 0
+        for i in completion.split("\n"):
+            text = i.replace(" ", "").replace("*", "").replace(".", "").split("：")[0].replace("#", "")
+            if reward < 2 and text.replace(str(reward + 1), "") == format_title[reward]:
+                reward += 1
+            if not startjson and text == '```json':
+                startjson = True
+            elif not startjson and text =='{':
+                startjson = True
+                json += text
+            elif startjson:
+                if text == '```':
+                    break
+                json += text
+        if json != '':
+            reward += 1
+            try:
+                json = eval(json)
+                if 'target' not in json:
+                    json = -1
+                else:
+                    reward += 1
+                    pr_target = json['target']
+                    if pr_target == '无' or pr_target == None or pr_target == 'null' or '无明确' in pr_target:
+                        pr_target = None
+                    if type(pr_target) == list and len(pr_target) == 1:
+                        if ',' in pr_target:
+                            pr_target = pr_target[0].split(',')
+                        else:
+                            pr_target = pr_target[0]
+                    json['target'] = pr_target
+            except:
+                json = -1
+        else:
+            json = -1
+        self.ALL[key] = {
+            'json': json,
+            'reward': reward
+        }
+    #  三段式输出格式奖励
+    def conut_format_reward(self,completion):
+        key = self.key(completion)
+        reward = self.ALL[key]['reward']
+        return reward / 5
+    
+    # 如果目标是list 奖励输出也是list的情况
+    def conut_format_reward_1(self,completion,target):
+        key = self.key(completion)
+        json = self.ALL[key]['json']
+        if json == -1:
+            return 0
+        if type(json['target']) == list and type(target) == list:
+            return 1
+        if type(json['target']) == str and type(target) == str:
+                return 1
+        return 0
+    
+    # 输出是全为文中部分
+    def conut_format_reward_2(self,completion):
+        key = self.key(completion)
+        json = self.ALL[key]['json']
+        if json == -1:
+            return 0
+        pr_target = json['target']
+        if pr_target == None:
+            return 0
+        if type(pr_target) != list:
+            pr_target = [pr_target]
+        lenss = len(pr_target)
+        out = 0
+        for i in  pr_target:
+            if i in completion:
+                out += 1
+        return out / lenss            
+
+    def conut_reward(self,completion, target=None):
+        key = self.key(completion)
+        json = self.ALL[key]['json']
+        if json == -1:
+            return 0, -1
+        pr_target = json['target']
+        if 'null' == target:
+            target = None
+        if target == pr_target:
+            return 1,pr_target
+        if target == None or pr_target == None:
+            return 0, pr_target
+        if len(target) != 0 and target[0] == '"':
+            target = target.replace('"', '')
+        if target[0] == '[':
+            target = eval(target)
+        if type(pr_target) == dict:
+            return 0 ,pr_target
+        if type(pr_target) == str and type(target) == str:
+            return soft_match_score(json['target'], target),pr_target
+        if type(pr_target) == str:
+            pr_target = [pr_target]
+        if type(target) == str:
+            target = [target]
+        return reward_list(pr_target, target), pr_target
+
+
 
 def conut_format_reward(completion):
     startjson = False
@@ -77,10 +193,14 @@ def conut_reward(completion, target=None):
         pr_target = None
     if 'null' == target:
         target = None
-    if target[0] == '[':
-        target = eval(target)
     if target == pr_target:
         return 1,pr_target
+    if target == None or pr_target == None:
+        return 0, pr_target
+    if len(target) != 0 and target[0] == '"':
+        target = target.replace('"', '')
+    if target[0] == '[':
+        target = eval(target)
     if type(pr_target) == dict:
         return 0 ,pr_target
     if type(pr_target) == str and type(target) == str:
@@ -100,7 +220,6 @@ def reward_list(pr_target, target):
 
     while set(similarity_matrix) != {0}:
         maxindex = similarity_matrix.index(max(similarity_matrix))
-        print(maxindex)
         max_i = maxindex // len(pr_target)
         max_j = maxindex % len(pr_target)
         out[max_j] = similarity_matrix[maxindex]
@@ -427,7 +546,7 @@ def assembly_prompt_dict(id, WORK, content, paragraph_1=None, paragraph_2=None, 
         prompt_list.append({
             # You are a helpful assistant.\n
             "role": "system",
-            "content": f"进行'仇恨目标'抽取任务，从给出的'社交媒体发言'中抽取作者表达仇恨的群体或个人。仇恨评论通常带有贬义、侮辱性或歧视性，针对特定群体或个人。输出以下段落：俚语分析、语义分析、仇恨目标判断、仇恨目标json输出。\njson 模板:\n{{\n\t\"target\": '仇恨目标',\n}}\n",
+            "content": f"进行'仇恨目标'抽取任务，从给出的'社交媒体发言'中抽取作者表达仇恨的群体或个人。仇恨评论通常带有贬义、侮辱性或歧视性，针对特定群体或个人。输出以下段落：俚语分析、语义分析、仇恨目标json输出。\njson 模板:\n{{\n\t\"target\": '仇恨目标',\n}}\n",
         })
         prompt_list.append({
             "role": "user",

@@ -1,13 +1,15 @@
 # 模型参数
-model_name_or_path: SFT/merge
+model_name_or_path: ./OUT/c100u
+# c100 = Q7_SFT12_4_SFT12_3_SFT3_SFT4_SFT13t_SFT13ts_GRPO12C100
 model_revision: main
 torch_dtype: bfloat16
-lora_r: 64 # Lora 秩数
-lora_alpha: 32
+lora_r: 128 # Lora 秩数
+lora_alpha: 256 # Lora alpha
+lora_dropout: 0.1 # Lora dropout
 attn_implementation: flash_attention_2
 bf16: true
 tf32: true
-output_dir: GRPO
+output_dir: OUT/c100_GRPO
 
 # Swanlab 训练流程记录参数
 swanlab: true # 是否开启 Swanlab 
@@ -16,7 +18,8 @@ project: llama-fine
 experiment_name: GRPO
 
 # 训练参数
-max_steps: 450 # 最大训练步长
+# max_steps: 450 # 最大训练步长
+num_train_epochs: 1 # 训练一轮完整数据集
 per_device_train_batch_size: 1
 gradient_accumulation_steps: 4
 gradient_checkpointing: true
@@ -33,9 +36,16 @@ optim: adamw_8bit # 优化器, 8bit加速
 max_prompt_length: 256 # 输入 prompt 最大长度，本实验基本不会有太大变化
 max_completion_length: 9999 # 输出回答长度，包含推理思维链
 num_generations: 8
-# use_vllm: true # 启用 vllm 来加速推理
-# vllm_gpu_memory_utilization: 0.4
 
+
+# use_vllm: true # 启用 vllm 来加速推理
+# vllm_gpu_memory_utilization: 0.85
+# 8 45  
+# 9 COOM
+#  False 58
+
+
+bnb_4bit_quant_storage: uint8
 # Logging arguments
 logging_strategy: steps
 logging_steps: 1
