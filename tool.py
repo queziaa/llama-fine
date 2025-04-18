@@ -138,7 +138,7 @@ class REWARD:
                 out += 1
         return out / lenss            
 
-    def Final_matching(self,completion, target=None):
+    def Final_matching(self,completion, target):
         key = self.key(completion)
         json = self.ALL[key]['json']
         if json == -1:

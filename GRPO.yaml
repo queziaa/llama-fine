@@ -35,7 +35,7 @@ seed: 3407 # 随机种子，方便实验复现
 beta: 0.001 # KL 惩罚因子，调整过，参见下文介绍
 optim: adamw_8bit # 优化器, 8bit加速
 max_prompt_length: 256 # 输入 prompt 最大长度，本实验基本不会有太大变化
-max_completion_length: 9999 # 输出回答长度，包含推理思维链
+max_completion_length: 2048 # 输出回答长度，包含推理思维链
 num_generations: 8
 
 # use_vllm: true # 启用 vllm 来加速推理

@@ -22,56 +22,54 @@ Reward = REWARD()
 
 def len_HateTargetJudgment(completions, **kwargs):
     reward_list = []
-    for completion in completions:
-        reward_list.append(Reward.conut_format_reward(completion))
-    print('len_HateTargetJudgment', reward_list)
-    LOGLOGfilf.write('len_HateTargetJudgment' + str(reward_list) + '\n')
+    for completion_i in completions:
+        reward_list.append(Reward.len_HateTargetJudgment(completion_i))
+    print('仇恨判断输出长度奖励', reward_list)
+    LOGLOGfilf.write('仇恨判断输出长度奖励' + str(reward_list) + '\n')
     return reward_list
 
 def three_stage(completions, **kwargs):
     reward_list = []
-    for completion in completions:
-        reward_list.append(Reward.conut_format_reward(completion))
-    print('three_stage', reward_list)
-    LOGLOGfilf.write('three_stage' + str(reward_list) + '\n')
+    for completion_i in completions:
+        reward_list.append(Reward.three_stage(completion_i))
+    print('三段式思考输出奖励', reward_list)
+    LOGLOGfilf.write('三段式思考输出奖励' + str(reward_list) + '\n')
     return reward_list
 
-def out_number_matching(completions, **kwargs):
+def out_number_matching(completions, target,**kwargs):
     reward_list = []
     LOGLOGfilf.write(str(completions))
-    for completion in completions:
-        reward_list.append(Reward.conut_format_reward_2(completion))
-    print('out_number_matching', reward_list)
-    LOGLOGfilf.write('out_number_matching' + str(reward_list) + '\n')
+    for completion_i, target_i in zip(completions, target):
+        reward_list.append(Reward.out_number_matching(completion_i, target_i))
+    print('输出和预测数量奖励', reward_list)
+    LOGLOGfilf.write('输出和预测数量奖励' + str(reward_list) + '\n')
     return reward_list
 
-def intercepted_in_text(completions, target, **kwargs):
+def intercepted_in_text(completions, **kwargs):
     reward_list = []
-    for completion, target in zip(completions, target):
-        reward_list.append(Reward.intercepted_in_text(completion, target))
-    print('intercepted_in_text', reward_list)
-    LOGLOGfilf.write('intercepted_in_text' + str(reward_list) + '\n')
+    for completion_i in completions:
+        reward_list.append(Reward.intercepted_in_text(completion_i))
+    print('输出是否为文中截取奖励', reward_list)
+    LOGLOGfilf.write('输出是否为文中截取奖励' + str(reward_list) + '\n')
     return reward_list
-
 
 def Final_matching(completions, **kwargs):
     target_list = kwargs["target"]
     reward_list = []
     pr_target_list = []
-    for completion, target in zip(completions, target_list):
-        rw,pr_target = Reward.conut_reward(completion, target)
+    for completion_i, target in zip(completions, target_list):
+        rw,pr_target = Reward.Final_matching(completion_i, target)
         pr_target_list.append(pr_target)
         reward_list.append(rw)
-    print('targets', target_list)
-    LOGLOGfilf.write('targets' + str(target_list) + '\n')
-    print('pr_target_list', pr_target_list)
-    LOGLOGfilf.write('pr_target_list' + str(pr_target_list) + '\n')
-    print('Final_matching', reward_list)
-    LOGLOGfilf.write('Final_matching' + str(reward_list) + '\n')
-    print('identical', kwargs['id'])
-    LOGLOGfilf.write('identical' + str(kwargs['id']) + '\n')
+    print('黄金', target_list)
+    LOGLOGfilf.write('黄金' + str(target_list) + '\n')
+    print('预测', pr_target_list)
+    LOGLOGfilf.write('预测' + str(pr_target_list) + '\n')
+    print('预测奖励', reward_list)
+    LOGLOGfilf.write('预测奖励' + str(reward_list) + '\n')
+    print('编号', kwargs['id'])
+    LOGLOGfilf.write('编号' + str(kwargs['id']) + '\n')
     return reward_list
-
 
 
 parser = TrlParser((ModelConfig, GRPOConfig))
@@ -102,16 +100,21 @@ model = FastLanguageModel.get_peft_model(
     random_state = training_args.seed,  # 设置随机种子
 )
 
+def generate_r1_prompt(prompt, target):
+    return {"prompt": tokenizer.apply_chat_template(prompt, tokenize=False, 
+    continue_final_message=True), "target": target}
 from tool import dataset_DEAL
+
+
 seed = 3407
 WORK = 31      #  3:仇恨目标搜索微调  31:仇恨目标奖励微调  
 WORKFILE = 'outputnew_3_CC.json'
 train_dataset,test_dataset = dataset_DEAL(WORKFILE,WORK,seed)
-# train_dataset 删除前100条数据  
-train_dataset = train_dataset.select(range(100, len(train_dataset)))
-def generate_r1_prompt(prompt, target):
-    return {"prompt": tokenizer.apply_chat_template(prompt, tokenize=False, continue_final_message=True), "target": target}
+train_dataset = train_dataset.select(range(100, len(train_dataset)))  # train_dataset 删除前100条数据  
 train_dataset = train_dataset.map(lambda x: generate_r1_prompt(x["prompt"], x["target"]))
+test_dataset = test_dataset.map(lambda x: generate_r1_prompt(x["prompt"], x["target"]))
+
+
 trainer = GRPOTrainer(
     model = model,
     processing_class = tokenizer,
