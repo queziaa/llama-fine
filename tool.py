@@ -51,10 +51,8 @@ class REWARD:
             text = i.replace(" ", "").replace("*", "").replace(".", "").split("：")[0].replace("#", "")
             if reward < 3 and text.replace(str(reward + 1), "") == format_title[reward]:
                 reward += 1
-            
             if not startHateTargetJudgment and reward == 2:
                 startHateTargetJudgment = True
-            
             if not startjson and text == '```json':
                 startjson = True
             elif not startjson and text =='{':
@@ -63,8 +61,10 @@ class REWARD:
             elif startjson:
                 if text == '```':
                     break
+                elif text == '}':
+                    json += text
+                    break
                 json += text
-
             if startHateTargetJudgment and reward == 2 and not startjson:
                             HateTargetJudgment += text
 
@@ -72,21 +72,23 @@ class REWARD:
             reward += 1
             try:
                 json = eval(json)
-                if 'target' not in json:
-                    json = -1
-                else:
-                    reward += 1
-                    pr_target = json['target']
-                    if pr_target == '无' or pr_target == None or pr_target == 'null' or '无明确' in pr_target:
-                        pr_target = None
-                    if type(pr_target) == list and len(pr_target) == 1:
-                        if ',' in pr_target:
-                            pr_target = pr_target[0].split(',')
-                        else:
-                            pr_target = pr_target[0]
-                    json['target'] = pr_target
             except:
                 json = -1
+            pr_target = -1
+            if 'target'  in json or  '仇恨目标'  in json:
+                reward += 1
+                if '仇恨目标' in json:
+                    pr_target = json['仇恨目标']
+                else:
+                    pr_target = json['target']
+            if pr_target == '无' or pr_target == 'null' or pr_target == None or pr_target == '' or '无明确' in pr_target:
+                pr_target = None
+            elif type(pr_target) == list and len(pr_target) == 1:
+                if ',' in pr_target[0]:
+                    pr_target = pr_target[0].split(',')
+                else:
+                    pr_target = pr_target[0]
+            json = {'target': pr_target}
         else:
             json = -1
         self.ALL[key] = {
@@ -142,7 +144,7 @@ class REWARD:
         key = self.key(completion)
         json = self.ALL[key]['json']
         if json == -1:
-            return 0, -1
+            return 0,-1
         pr_target = json['target']
         if 'null' == target:
             target = None
@@ -499,7 +501,8 @@ def assembly_prompt_dict(id, WORK, content, paragraph_1=None, paragraph_2=None, 
         prompt_list.append({
             # You are a helpful assistant.\n
             "role": "system",
-            "content": f"进行'仇恨目标'抽取任务，从给出的'社交媒体发言'中抽取作者表达仇恨的目标群体或个人或人称代词。仇恨评论通常带有贬义、侮辱性或歧视性，针对特定群体或个人。输出以下段落：1.俚语分析、2.语义分析、3.仇恨目标判断、4.仇恨目标json输出。\njson 模板:\n{{\n\t\"target\": '仇恨目标',\n}}\n",
+            # "content": f"进行'仇恨目标'识别任务，从给出的'社交媒体发言'中识别作者表达仇恨的目标群体或个人或人称代词。输出的'仇恨目标'必须是文中成分。输出以下段落：1.俚语分析、2.语义分析、3.仇恨目标判断、4.仇恨目标json输出。\njson 模板:\n{{\n\t\"target\": '仇恨目标',\n}}\n",
+            "content": f"从给出的'社交媒体发言'文中抽取'仇恨目标'，'仇恨目标'必须是文中成分，'仇恨目标'是作者表达仇恨的群体/个人/人称代词，作者没有发表仇恨言论则None'\n依次输出以下段落：1.俚语分析、2.语义分析、3.仇恨目标判断、4.仇恨目标json输出。\njson 输出模板:\n{{\n\t\"仇恨目标\": String or List of String or None,\n}}\n",
         })
         prompt_list.append({
             "role": "user",
@@ -573,7 +576,6 @@ def assembly_prompt_dict(id, WORK, content, paragraph_1=None, paragraph_2=None, 
             "role": "assistant",
             "content": f'**俚语分析**：\n{cout}'
         })
-
     return prompt_list
 
 

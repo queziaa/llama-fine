@@ -1,6 +1,7 @@
 from unsloth import FastLanguageModel, PatchFastRL
 import os
 os.environ["VLLM_USE_V1"] = '0'
+os.environ["TORCHDYNAMO_DISABLE"] = "1"  # 完全禁用dynamo
 import logging
 from datetime import datetime
 from tool import soft_match_score,REWARD
@@ -38,7 +39,6 @@ def three_stage(completions, **kwargs):
 
 def out_number_matching(completions, target,**kwargs):
     reward_list = []
-    LOGLOGfilf.write(str(completions))
     for completion_i, target_i in zip(completions, target):
         reward_list.append(Reward.out_number_matching(completion_i, target_i))
     print('输出和预测数量奖励', reward_list)
@@ -65,10 +65,12 @@ def Final_matching(completions, **kwargs):
     LOGLOGfilf.write('黄金' + str(target_list) + '\n')
     print('预测', pr_target_list)
     LOGLOGfilf.write('预测' + str(pr_target_list) + '\n')
-    print('预测奖励', reward_list)
-    LOGLOGfilf.write('预测奖励' + str(reward_list) + '\n')
+    print('**预测奖励**', reward_list)
+    LOGLOGfilf.write('**预测奖励**' + str(reward_list) + '\n')
     print('编号', kwargs['id'])
     LOGLOGfilf.write('编号' + str(kwargs['id']) + '\n')
+    LOGLOGfilf.write(str(completions))
+    LOGLOGfilf.write('-----------------------------------------' + '\n')
     return reward_list
 
 
@@ -101,8 +103,13 @@ model = FastLanguageModel.get_peft_model(
 )
 
 def generate_r1_prompt(prompt, target):
-    return {"prompt": tokenizer.apply_chat_template(prompt, tokenize=False, 
-    continue_final_message=True), "target": target}
+    return {
+        "prompt": 
+            tokenizer.apply_chat_template(prompt, tokenize=False, continue_final_message=True).replace("assistant\n<|im_end|>\n", "assistant\n"), 
+        "target": 
+            target
+    }
+
 from tool import dataset_DEAL
 
 
@@ -111,6 +118,8 @@ WORK = 31      #  3:仇恨目标搜索微调  31:仇恨目标奖励微调
 WORKFILE = 'outputnew_3_CC.json'
 train_dataset,test_dataset = dataset_DEAL(WORKFILE,WORK,seed)
 train_dataset = train_dataset.select(range(100, len(train_dataset)))  # train_dataset 删除前100条数据  
+train_dataset = train_dataset.shuffle(seed=seed)
+
 train_dataset = train_dataset.map(lambda x: generate_r1_prompt(x["prompt"], x["target"]))
 test_dataset = test_dataset.map(lambda x: generate_r1_prompt(x["prompt"], x["target"]))
 
@@ -119,10 +128,10 @@ trainer = GRPOTrainer(
     model = model,
     processing_class = tokenizer,
     reward_funcs=[
-        len_HateTargetJudgment,
-        three_stage,
-        out_number_matching,
-        intercepted_in_text,
+        # len_HateTargetJudgment,
+        # three_stage,
+        # out_number_matching,
+        # intercepted_in_text,
         Final_matching
     ],
     args=training_args,
