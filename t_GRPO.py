@@ -20,33 +20,41 @@ LOGLOGfilf = open('log.txt', 'a')
 
 Reward = REWARD()
 
-def format_reward_func(completions, **kwargs):
+def len_HateTargetJudgment(completions, **kwargs):
     reward_list = []
     for completion in completions:
         reward_list.append(Reward.conut_format_reward(completion))
-    print('format_reward_func', reward_list)
-    LOGLOGfilf.write('format_reward_func' + str(reward_list) + '\n')
+    print('len_HateTargetJudgment', reward_list)
+    LOGLOGfilf.write('len_HateTargetJudgment' + str(reward_list) + '\n')
     return reward_list
 
-def format_reward_func_2(completions, **kwargs):
+def three_stage(completions, **kwargs):
+    reward_list = []
+    for completion in completions:
+        reward_list.append(Reward.conut_format_reward(completion))
+    print('three_stage', reward_list)
+    LOGLOGfilf.write('three_stage' + str(reward_list) + '\n')
+    return reward_list
+
+def out_number_matching(completions, **kwargs):
     reward_list = []
     LOGLOGfilf.write(str(completions))
     for completion in completions:
         reward_list.append(Reward.conut_format_reward_2(completion))
-    print('format_reward_func_2', reward_list)
-    LOGLOGfilf.write('format_reward_func_2' + str(reward_list) + '\n')
+    print('out_number_matching', reward_list)
+    LOGLOGfilf.write('out_number_matching' + str(reward_list) + '\n')
     return reward_list
 
-def conut_format_reward_1(completions, target, **kwargs):
+def intercepted_in_text(completions, target, **kwargs):
     reward_list = []
     for completion, target in zip(completions, target):
-        reward_list.append(Reward.conut_format_reward_1(completion, target))
-    print('conut_format_reward_1', reward_list)
-    LOGLOGfilf.write('conut_format_reward_1' + str(reward_list) + '\n')
+        reward_list.append(Reward.intercepted_in_text(completion, target))
+    print('intercepted_in_text', reward_list)
+    LOGLOGfilf.write('intercepted_in_text' + str(reward_list) + '\n')
     return reward_list
 
 
-def equation_reward_func(completions, **kwargs):
+def Final_matching(completions, **kwargs):
     target_list = kwargs["target"]
     reward_list = []
     pr_target_list = []
@@ -58,8 +66,8 @@ def equation_reward_func(completions, **kwargs):
     LOGLOGfilf.write('targets' + str(target_list) + '\n')
     print('pr_target_list', pr_target_list)
     LOGLOGfilf.write('pr_target_list' + str(pr_target_list) + '\n')
-    print('equation_reward_func', reward_list)
-    LOGLOGfilf.write('equation_reward_func' + str(reward_list) + '\n')
+    print('Final_matching', reward_list)
+    LOGLOGfilf.write('Final_matching' + str(reward_list) + '\n')
     print('identical', kwargs['id'])
     LOGLOGfilf.write('identical' + str(kwargs['id']) + '\n')
     return reward_list
@@ -108,10 +116,11 @@ trainer = GRPOTrainer(
     model = model,
     processing_class = tokenizer,
     reward_funcs=[
-        # format_reward_func,  # 格式奖励函数
-        format_reward_func_2,  # 格式奖励函数2
-        conut_format_reward_1,  # 格式奖励函数1
-        equation_reward_func,  # 方程奖励函数
+        len_HateTargetJudgment,
+        three_stage,
+        out_number_matching,
+        intercepted_in_text,
+        Final_matching
     ],
     args=training_args,
     train_dataset=train_dataset,
