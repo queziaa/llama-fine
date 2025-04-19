@@ -82,3 +82,17 @@ trainer = SFTTrainer(
     ),
 )
 trainer_stats = trainer.train()
+
+
+import os
+checkpoint_dirs = [d for d in os.listdir(Lora_dir) if d.startswith('checkpoint-')]
+if not checkpoint_dirs:
+    print("No checkpoint directories found.")
+latest_checkpoint = max(checkpoint_dirs, key=lambda x: int(x.split('-')[1]))
+checkpoint_dir = os.path.join(Lora_dir, latest_checkpoint)
+if checkpoint_dir:
+    new_checkpoint_path = os.path.join('./', str(WORK) + WORKFILE.split('/')[-1].split('.')[0])
+    os.rename(checkpoint_dir, new_checkpoint_path)
+    print(f"Renamed {checkpoint_dir} to {new_checkpoint_path}")
+import shutil
+shutil.rmtree(Lora_dir)
