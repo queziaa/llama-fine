@@ -14,3 +14,6 @@ log.txt
 unsloth/
 OUT/
 auto_log.txt
+DeepSeek-R1-Distill-Qwen-1.5B-8bit/
+DeepSeek-R1-Distill-Qwen-7B-unsloth-bnb-4bit
+DeepSeek-R1-Distill-Qwen-1.5B-unsloth-bnb-4bit

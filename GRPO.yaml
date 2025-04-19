@@ -35,7 +35,7 @@ seed: 3407 # 随机种子，方便实验复现
 
 # GRPO 算法参数
 beta: 0.001 # KL 惩罚因子，调整过，参见下文介绍
-optim: adamw_8bit # 优化器, 8bit加速
+optim: adamw_torch_fused # 优化器, 8bit加速
 max_prompt_length: 256 # 输入 prompt 最大长度，本实验基本不会有太大变化
 max_completion_length: 4096 # 输出回答长度，包含推理思维链
 num_generations: 8
@@ -45,6 +45,7 @@ do_sample: true # 是否启用采样
 temperature: 0.7 # 采样温度
 top_p: 0.9 # 采样 top_p
 top_k: 50 # 采样 top_k
+max_grad_norm = 0.1
 
 # use_vllm: true # 启用 vllm 来加速推理
 # vllm_gpu_memory_utilization: 0.85
@@ -58,3 +59,21 @@ logging_strategy: steps
 logging_steps: 1
 save_strategy: "steps"
 save_steps: 50 # 每隔多少步保存一次
+
+
+    # learning_rate = 5e-6,
+    # weight_decay = 0.1,
+    # warmup_ratio = 0.1,
+    # lr_scheduler_type = "cosine",
+    # optim = "adamw_torch_fused",
+    # logging_steps = 1,
+    # per_device_train_batch_size = 1,
+    # gradient_accumulation_steps = 4, # Increase to 4 for smoother training
+    # num_generations = 8, # Decrease if out of memory
+    # max_prompt_length = max_prompt_length,
+    # max_completion_length = max_seq_length - max_prompt_length,
+    # # num_train_epochs = 1, # Set to 1 for a full training run
+    # max_steps = 1000,
+    # save_steps = 250,
+    # report_to = "none", # Can use Weights & Biases
+    # output_dir = "outputs",
