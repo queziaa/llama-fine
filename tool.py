@@ -363,12 +363,12 @@ PRO['第五任务'] = """这里提供了一个'评论片段提取'任务介绍�
 从'社交媒体发言'中提取出作者发表评论的'评论目标'以及对应的'评论片段'。
 **示例**
 """
-PRO['3WorkQwenPrompt_instruction_input'] = """<|im_start|>system
-进行'仇恨目标'抽取任务，从句子中抽取作者表达仇恨的群体或个人。仇恨评论通常带有贬义、侮辱性或歧视性，针对特定群体或个人。输出以下段落：俚语分析、语义分析、仇恨目标判断、仇恨目标json输出。<|im_end|>
-<|im_start|>user
-{}<|im_end|>
-<|im_start|>assistant
-"""
+# PRO['3WorkQwenPrompt_instruction_input'] = """<|im_start|>system
+# 进行'仇恨目标'抽取任务，从句子中抽取作者表达仇恨的群体或个人。仇恨评论通常带有贬义、侮辱性或歧视性，针对特定群体或个人。输出以下段落：俚语分析、语义分析、仇恨目标判断、仇恨目标json输出。<|im_end|>
+# <|im_start|>user
+# {}<|im_end|>
+# <|im_start|>assistant
+# """
 PRO['3WorkQwenPrompt_output'] = """### 分析
 
 1. **俚语分析**：
@@ -496,75 +496,65 @@ def dataset_DEAL(WORKFILENAKE,WORK,seed):
     return tr_dataset, ts_dataset
 
 def assembly_prompt_dict(id, WORK, content, paragraph_1=None, paragraph_2=None, paragraph_3=None, target=None,Argument=None):
-    prompt_list = []
+    prompt_list = ''
     if WORK == 3 or WORK == 31:
-        prompt_list.append({
-            # You are a helpful assistant.\n
-            "role": "system",
-            # "content": f"进行'仇恨目标'识别任务，从给出的'社交媒体发言'中识别作者表达仇恨的目标群体或个人或人称代词。输出的'仇恨目标'必须是文中成分。输出以下段落：1.俚语分析、2.语义分析、3.仇恨目标判断、4.仇恨目标json输出。\njson 模板:\n{{\n\t\"target\": '仇恨目标',\n}}\n",
-            "content": f"从给出的'社交媒体发言'文中抽取'仇恨目标'，'仇恨目标'必须是文中成分，'仇恨目标'是作者表达仇恨的群体/个人/人称代词，作者没有发表仇恨言论则None'\n依次输出以下段落：1.俚语分析、2.语义分析、3.仇恨目标判断、4.仇恨目标json输出。\njson 输出模板:\n{{\n\t\"仇恨目标\": String or List of String or None,\n}}\n",
-        })
-        prompt_list.append({
-            "role": "user",
-            "content": f"社交媒体发言:{content}",
-        })
+        # prompt_list.append({
+            # "role": "user",
+            # 'content': '',
+        # })
+        prompt_list += '<｜User｜>'
+        prompt_list += f"从给出的'社交媒体发言'文中抽取'仇恨目标'，'仇恨目标'必须是文中成分，'仇恨目标'是作者表达仇恨的群体/个人/人称代词，作者没有发表仇恨言论则None。\n"
+        prompt_list += f"`依次输出以下思考段落：1.俚语分析、2.语义分析、3.仇恨目标判断。\n"
+        prompt_list += f"最后json输出，模板:{{\"仇恨目标\": List of String or None}}\n"
+        prompt_list += f"社交媒体发言:{content}\n"
+        # "content": f"进行'仇恨目标'识别任务，从给出的'社交媒体发言'中识别作者表达仇恨的目标群体或个人或人称代词。输出的'仇恨目标'必须是文中成分。输出以下段落：1.俚语分析、2.语义分析、3.仇恨目标判断、4.仇恨目标json输出。\njson 模板:\n{{\n\t\"target\": '仇恨目标',\n}}\n",
+        prompt_list += f'<｜Assistant｜><think>'
         if WORK == 3:
-            prompt_list.append({
-                "role": "assistant",
-                "content": f'### 分析\n1. **俚语分析**：\n{paragraph_1}\n2. **语义分析**：\n{paragraph_2}\n3. **仇恨目标判断**：\n{paragraph_3}\n4. **仇恨目标JSON输出**：\n```json\n{{\n\t\"target\": {target},\n}}\n```'
-            })
-        elif WORK == 31:
-            prompt_list.append({
-                "role": "assistant",
-                "content": ''
-            })
-    elif WORK == 4 or WORK == 41:
-        prompt_list.append({
-            "role": "system",
-            "content": f"进行'评论片段'抽取任务。从'社交媒体发言'中抽取出作者对'评论目标'表达主观评价的核心片段'评价片段'，输出以下段落：俚语分析、语义分析、评价片段提取、评论片段json输出。\njson 模板:\n{{\n\t\"Argument\": '评价片段',\n}}\n",
-        })
-        prompt_list.append({
-            "role": "user",
-            "content": f"社交媒体发言:{content}\n评论目标:{target}",
-        })
-        if WORK == 4:
-            prompt_list.append({
-                "role": "assistant",
-                "content": f'### 分析\n1. **俚语分析**：\n{paragraph_1}\n2. **语义分析**：\n{paragraph_2}\n3. **评价片段提取**：\n{paragraph_3}\n4. **评论片段json输出**：\n```json\n{{\n\t\"Argument\": {Argument},\n}}\n```'
-            })
-        elif WORK == 41:
-            prompt_list.append({
-                "role": "assistant",
-                "content": ''
-            })
+            prompt_list += f'### 分析\n1. **俚语分析**：\n{paragraph_1}\n2. **语义分析**：\n{paragraph_2}\n3. **仇恨目标判断**：\n{paragraph_3}\n</think>**仇恨目标JSON输出**：\n```json\n{{\n\t\"target\": {target},\n}}\n```<｜end▁of▁sentence｜>'
+            # prompt_list.append({
+            #     "role": "assistant",
+            #     "content": f'<think>### 分析\n1. **俚语分析**：\n{paragraph_1}\n2. **语义分析**：\n{paragraph_2}\n3. **仇恨目标判断**：\n{paragraph_3}\n</think>**仇恨目标JSON输出**：\n```json\n{{\n\t\"target\": {target},\n}}\n```'
+            # })
+    # elif WORK == 4 or WORK == 41:
+    #     prompt_list.append({
+    #         "role": "system",
+    #         "content": f"进行'评论片段'抽取任务。从'社交媒体发言'中抽取出作者对'评论目标'表达主观评价的核心片段'评价片段'，输出以下段落：俚语分析、语义分析、评价片段提取、评论片段json输出。\njson 模板:\n{{\n\t\"Argument\": '评价片段',\n}}\n",
+    #     })
+    #     prompt_list.append({
+    #         "role": "user",
+    #         "content": f"社交媒体发言:{content}\n评论目标:{target}",
+    #     })
+    #     if WORK == 4:
+    #         prompt_list.append({
+    #             "role": "assistant",
+    #             "content": f'### 分析\n1. **俚语分析**：\n{paragraph_1}\n2. **语义分析**：\n{paragraph_2}\n3. **评价片段提取**：\n{paragraph_3}\n4. **评论片段json输出**：\n```json\n{{\n\t\"Argument\": {Argument},\n}}\n```'
+    #         })
+    #     elif WORK == 41:
+    #         prompt_list.append({
+    #             "role": "assistant",
+    #             "content": ''
+    #         })
     elif WORK == 12 or WORK == 121:
-        prompt_list.append({
-            "role": "system",
-            "content": f"进行'俚语分析'任务。从'社交媒体发言'中分析作者使用的俚语",
-        })
-        prompt_list.append({
-            "role": "user",
-            "content": f"社交媒体发言:{content}",
-        })
+        prompt_list += '<｜User｜>'
+        prompt_list +=  f"分析'社交媒体发言'使用俚语的含义。(不要思考)\n社交媒体发言:{content}\n"
+        # prompt_list.append({
+            # "role": "user",
+            # "content": f"分析'社交媒体发言'使用俚语的含义。(不要思考)\n社交媒体发言:{content}\n",
+        # })
+        prompt_list += '<｜Assistant｜>'
         if WORK == 12:
-            prompt_list.append({
-                "role": "assistant",
-                "content": f'**俚语分析**：\n{paragraph_1}'
-            })
-        elif WORK == 121:
-            prompt_list.append({
-                "role": "assistant",
-                "content": ''
-            })
+            prompt_list += f'**俚语分析**：\n{paragraph_1}<｜end▁of▁sentence｜>'
+            # prompt_list.append({
+            #     "role": "assistant",
+            #     "content": f'**俚语分析**：\n{paragraph_1}'
+            # })
     elif WORK == 13:
-        prompt_list.append({
-            "role": "system",
-            "content": f"进行'俚语分析'任务。从'社交媒体发言'中分析作者使用的俚语",
-        })
-        prompt_list.append({
-            "role": "user",
-            "content": f"社交媒体发言:{content}",
-        })
+        prompt_list += '<｜User｜>'
+        prompt_list +=  f"分析'社交媒体发言'使用俚语的含义。(不要思考)\n社交媒体发言:{content}\n"
+        # prompt_list.append({
+            # "role": "user",
+            # "content": f"分析'社交媒体发言'使用俚语的含义。(不要思考)\n社交媒体发言:{content}\n",
+        # })
         cout = ''
         # for k,v in slang_replace:
         for k, v in slang_replace.items():
@@ -572,12 +562,13 @@ def assembly_prompt_dict(id, WORK, content, paragraph_1=None, paragraph_2=None, 
                 cout += "其中‘" + k + '’是' + v + "\n"
         if cout == '':
             return None
-        prompt_list.append({
-            "role": "assistant",
-            "content": f'**俚语分析**：\n{cout}'
-        })
+        prompt_list += '<｜Assistant｜>'
+        prompt_list += f'**俚语分析**：\n{cout}<｜end▁of▁sentence｜>'
+        # prompt_list.append({
+            # "role": "assistant",
+            # "content": f'**俚语分析**：\n{cout}'
+        # })
     return prompt_list
-
 
 def assembly_prompt(content,work,isSlang):
     if work == 1:
