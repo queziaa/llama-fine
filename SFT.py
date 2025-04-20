@@ -41,7 +41,7 @@ if Lora_MODEL != None:
     )
 else:
     base_model,tokenizer = FastLanguageModel.from_pretrained(
-        model_name = "/llm/unsloth/DeepSeek-R1-Distill-Qwen-7B-unsloth-bnb-4bit",
+        model_name = "./unsloth/DeepSeek-R1-Distill-Qwen-7B-unsloth-bnb-4bit",
         max_seq_length = max_seq_length,
         max_lora_rank = 256
     )
@@ -49,7 +49,7 @@ else:
         base_model,
         r = 128, 
         lora_alpha = 256, 
-        lora_dropout = 0.3, 
+        lora_dropout = 0.2, 
         target_modules = ["q_proj", "k_proj", "v_proj", "o_proj","gate_proj", "up_proj", "down_proj",],
         bias = "lora_only",   #["none", "all", "lora_only"]
         use_gradient_checkpointing = "unsloth",
@@ -57,7 +57,7 @@ else:
         use_rslora = True,
         loftq_config = LoftQConfig(loftq_bits = 8, loftq_iter = 2)
     )
-dataset_train = dataset_DEAL(WORKFILE,WORK,seed)
+dataset_train = dataset_DEAL(WORKFILE,WORK)
 
 from trl import SFTTrainer
 from transformers import TrainingArguments
