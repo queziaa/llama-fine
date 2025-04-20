@@ -406,34 +406,49 @@ PRO['第四任务'] = """这里提供了一个'提取对某目标的仇恨语句
 从'句子'中抽取出作者对'仇恨目标'表达仇恨的关键'仇恨语句片段'
 **示例**
 """
-PRO['第五任务'] = """这里提供了一个'评论片段提取'任务介绍和示例，你不需要完成这个任务，根据示例去分析的提取过程，输出以下分析段落：俚语分析、语义分析、仇恨目标判断、仇恨目标json输出，俚语分析、语义分析、语句片段提取。
+PRO['第五任务'] = """这里提供了一个'评价目标、评论片段组合抽取'任务介绍和'输出'，你不需要完成这个任务，根据'输出'去分析的提取过程，输出以下分析段落：1.评论目标识别、2.评论片段识别、3.目标-片段组合json输出。json List输出模板:
+[
+  {
+    "评论目标": String,
+    "评论片段": String,
+  },
+  ...
+]
 **任务介绍**
-从'社交媒体发言'中提取出作者发表评论的'评论目标'以及对应的'评论片段'。
+从给出的'社交媒体发言'中提取出作者发表主观评论的'评论目标'以及对应的'评论片段'，成对输出。
 **示例**
 """
+# 社交媒体发言：曰本之前已经有很多地方承认同杏伴侣了
+# 输出：
+# [
+#   {
+#     "评论目标": "日本",
+#     "评论片段": "很多地方承认同杏伴侣了"
+#   }
+# ]
 # PRO['3WorkQwenPrompt_instruction_input'] = """<|im_start|>system
 # 进行'仇恨目标'抽取任务，从句子中抽取作者表达仇恨的群体或个人。仇恨评论通常带有贬义、侮辱性或歧视性，针对特定群体或个人。输出以下段落：俚语分析、语义分析、仇恨目标判断、仇恨目标json输出。<|im_end|>
 # <|im_start|>user
 # {}<|im_end|>
 # <|im_start|>assistant
 # """
-PRO['3WorkQwenPrompt_output'] = """### 分析
+# PRO['3WorkQwenPrompt_output'] = """### 分析
 
-1. **俚语分析**：
-{}
+# 1. **俚语分析**：
+# {}
    
-2. **语义分析**：
-{}
+# 2. **语义分析**：
+# {}
 
-3. **仇恨目标判断**：
-{}
+# 3. **仇恨目标判断**：
+# {}
 
-4. **仇恨目标JSON输出**：
-```json
-{{
-  "target": {},
-}}
-```<|im_end|>"""
+# 4. **仇恨目标JSON输出**：
+# ```json
+# {{
+#   "target": {},
+# }}
+# ```<|im_end|>"""
 def mergedParagraph(paragraph):
     temp = ''
     for i in paragraph:
@@ -645,8 +660,9 @@ def assembly_prompt(content,work,isSlang):
         prompt += ('仇恨目标:' + content['Target'] + '\n' )
         prompt += ('仇恨语句片段:' + content['Argument'] + '\n' )
     elif work == 5:
-        print('ERRR,废弃')
-        pass
+        prompt = PRO['第五任务']
+        prompt += ('社交媒体发言：' + content['content'] + '\n' )
+        prompt += ('输出：' + str(content['Target_Argument']) + '\n' )
     else:
         print('work error')
     return prompt
@@ -675,7 +691,6 @@ def OpenAi_api(key,content, work, isSlang, log=False,proxy=None):
         ],
         stream=False
     )
-    
     if log:
         print(prompt, response)
     return response
@@ -741,28 +756,39 @@ def load_train_byWORKTYPE(filename,WORKTYPY):
                     'id': i_datatemp['id'],
                     'Target': Target,
                 })
-        elif WORKTYPY == 4:
+        elif WORKTYPY == 4 or WORKTYPY == 5:
             datatemp = json.load(file)
             data = []
             for i_datatemp in datatemp:
                 output = output_tf(i_datatemp['output'])
-                for i_output in output:
-                    if i_output['Is'] == 'y':
+                if WORKTYPY == 4:
+                    for i_output in output:
+                        if i_output['Is'] == 'y':
+                            data.append({
+                                'content': i_datatemp['content'],
+                                'id': i_datatemp['id'],
+                                'Target': i_output['Target'],
+                                'Argument': i_output['Argument'],
+                            })
+                #5# #5# #5# #5# #5# #5# #5# #5# #5# #5# #5# #5# 
+                elif WORKTYPY == 5:
+                    ALLisn = True
+                    for i_output in output:
+                        if i_output['Is'] == 'y':
+                            ALLisn = False
+                    if ALLisn:
+                        ALL = []
+                        for i_output in output:
+                            Target_Argument = {}
+                            Target_Argument['Target'] = i_output['Target']
+                            Target_Argument['Argument'] = i_output['Argument']
+                            ALL.append(Target_Argument)
                         data.append({
                             'content': i_datatemp['content'],
                             'id': i_datatemp['id'],
-                            'Target': i_output['Target'],
-                            'Argument': i_output['Argument'],
+                            'Target_Argument': ALL,
                         })
-        elif WORKTYPY == 5:
-            datatemp = json.load(file)
-            data = []
-            for i_datatemp in datatemp:
-                output = output_tf(i_datatemp['output'])
-                data.append({
-                    'content': i_datatemp['content'],
-                    'output': output,
-                })
+                #5# #5# #5# #5# #5# #5# #5# #5# #5# #5# #5# #5# 
         else:
             raise ValueError("WORKTYPY must be 1 or 2")
     return data
