@@ -472,13 +472,13 @@ def mergedTarget(target):
 
 # def dataset_DEAL(WORKFILENAKE,WORK,seed):
 def dataset_DEAL(WORKFILENAKE,WORK):
-    lt_content = []
-    lt_paragraph_1 = []
-    lt_paragraph_2 = []
-    lt_paragraph_3 = []
-    lt_target = []
-    lt_ids = []
-    lt_prompt = []
+    # lt_content = []
+    # lt_paragraph_1 = []
+    # lt_paragraph_2 = []
+    # lt_paragraph_3 = []
+    # lt_target = []
+    # lt_ids = []
+    # lt_prompt = []
     l_content = []
     l_paragraph_1 = []
     l_paragraph_2 = []
@@ -504,7 +504,7 @@ def dataset_DEAL(WORKFILENAKE,WORK):
             "id": l_ids,
             "prompt": l_prompt,
         })
-        return tr_dataset,None
+        return tr_dataset
 
     with open(WORKFILENAKE, 'r', encoding='utf-8') as f:
         line = f.readline()

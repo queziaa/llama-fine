@@ -116,7 +116,7 @@ from tool import dataset_DEAL
 seed = 3407
 WORK = 31      #  3:仇恨目标搜索微调  31:仇恨目标奖励微调  
 WORKFILE = './DATA/outputnew3CC.json'
-train_dataset = dataset_DEAL(WORKFILE,WORK,seed)
+train_dataset = dataset_DEAL(WORKFILE,WORK)
 
 # train_dataset = train_dataset.map(lambda x: generate_r1_prompt(x["prompt"], x["target"]))
 # test_dataset = test_dataset.map(lambda x: generate_r1_prompt(x["prompt"], x["target"]))
