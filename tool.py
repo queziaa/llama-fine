@@ -508,7 +508,7 @@ def dataset_DEAL(WORKFILENAKE,WORK):
                 temp = i
                 id = temp['id']
                 content = temp['content']
-                prompt_list = assembly_prompt_dict(id, WORK, content)
+                prompt_list = prompt_finetun(id, WORK, content)
                 if prompt_list is None:
                     continue
                 l_content.append(content)
@@ -537,7 +537,7 @@ def dataset_DEAL(WORKFILENAKE,WORK):
             Argument = None
             if 'Argument' in temp:
                 Argument = temp['Argument']
-            prompt_list = assembly_prompt_dict(id, WORK, content, paragraph_1, paragraph_2, paragraph_3, target,Argument)
+            prompt_list = prompt_finetun(id, WORK, content, paragraph_1, paragraph_2, paragraph_3, target,Argument)
             # if ((id + seed)%11==0):
             #     lt_content.append(content)
             #     lt_paragraph_1.append(paragraph_1)
@@ -575,78 +575,62 @@ def dataset_DEAL(WORKFILENAKE,WORK):
     # return tr_dataset, ts_dataset
     return tr_dataset
 
-def assembly_prompt_dict(id, WORK, content, paragraph_1=None, paragraph_2=None, paragraph_3=None, target=None,Argument=None):
-    prompt_list = ''
+def prompt_finetun(id, WORK, content, paragraph_1=None, paragraph_2=None, paragraph_3=None, target=None,Argument=None):
+    prompt_list = '<｜User｜>'
     if WORK == 3 or WORK == 31:
-        # prompt_list.append({
-            # "role": "user",
-            # 'content': '',
-        # })
-        prompt_list += '<｜User｜>'
-        prompt_list += f"从给出的'社交媒体发言'文中抽取'仇恨目标'，'仇恨目标'必须是文中成分，'仇恨目标'是作者表达仇恨的群体/个人/人称代词，作者没有发表仇恨言论则None。\n"
+        prompt_list += f"从给出的‘社交媒体发言’文中抽取‘仇恨目标’，‘仇恨目标’必须是文中成分，‘仇恨目标’是作者表达仇恨的群体/个人/人称代词，作者没有发表仇恨言论则None。\n"
         prompt_list += f"`依次输出以下思考段落：1.俚语分析、2.语义分析、3.仇恨目标判断。\n"
         prompt_list += f"最后json输出，模板:{{\"仇恨目标\": List of String or None}}\n"
         prompt_list += f"社交媒体发言:{content}\n"
-        # "content": f"进行'仇恨目标'识别任务，从给出的'社交媒体发言'中识别作者表达仇恨的目标群体或个人或人称代词。输出的'仇恨目标'必须是文中成分。输出以下段落：1.俚语分析、2.语义分析、3.仇恨目标判断、4.仇恨目标json输出。\njson 模板:\n{{\n\t\"target\": '仇恨目标',\n}}\n",
         prompt_list += f'<｜Assistant｜><think>'
         if WORK == 3:
-            prompt_list += f'### 分析\n1. **俚语分析**：\n{paragraph_1}\n2. **语义分析**：\n{paragraph_2}\n3. **仇恨目标判断**：\n{paragraph_3}\n</think>**仇恨目标JSON输出**：\n```json\n{{\n\t\"target\": {target},\n}}\n```<｜end▁of▁sentence｜>'
-            # prompt_list.append({
-            #     "role": "assistant",
-            #     "content": f'<think>### 分析\n1. **俚语分析**：\n{paragraph_1}\n2. **语义分析**：\n{paragraph_2}\n3. **仇恨目标判断**：\n{paragraph_3}\n</think>**仇恨目标JSON输出**：\n```json\n{{\n\t\"target\": {target},\n}}\n```'
-            # })
-    # elif WORK == 4 or WORK == 41:
-    #     prompt_list.append({
-    #         "role": "system",
-    #         "content": f"进行'评论片段'抽取任务。从'社交媒体发言'中抽取出作者对'评论目标'表达主观评价的核心片段'评价片段'，输出以下段落：俚语分析、语义分析、评价片段提取、评论片段json输出。\njson 模板:\n{{\n\t\"Argument\": '评价片段',\n}}\n",
-    #     })
-    #     prompt_list.append({
-    #         "role": "user",
-    #         "content": f"社交媒体发言:{content}\n评论目标:{target}",
-    #     })
-    #     if WORK == 4:
-    #         prompt_list.append({
-    #             "role": "assistant",
-    #             "content": f'### 分析\n1. **俚语分析**：\n{paragraph_1}\n2. **语义分析**：\n{paragraph_2}\n3. **评价片段提取**：\n{paragraph_3}\n4. **评论片段json输出**：\n```json\n{{\n\t\"Argument\": {Argument},\n}}\n```'
-    #         })
-    #     elif WORK == 41:
-    #         prompt_list.append({
-    #             "role": "assistant",
-    #             "content": ''
-    #         })
+            prompt_list += f'### 分析\n1. **俚语分析**：\n{paragraph_1}\n2. **语义分析**：\n{paragraph_2}\n'
+            prompt_list += f'3. **仇恨目标判断**：\n{paragraph_3}\n</think>'
+            prompt_list += f'**仇恨目标JSON输出**：\n```json\n{{\n\t\"仇恨目标\": {target},\n}}\n```<｜end▁of▁sentence｜>'
+    elif WORK == 4 or WORK == 41:
+        prompt_list += f"从给出的‘社交媒体发言’抽取出作者对‘歧视目标’发表主观歧视看法‘歧视片段’，‘歧视片段’必须是文中成分。"
+        prompt_list += f"输出以下段落：1.俚语分析、2.语义分析、3.歧视片段提取。\n"
+        prompt_list += f"最后json输出，模板:{{\n\t\"歧视片段\": String\n}}\n"
+        prompt_list += f"社交媒体发言:{content}\n"
+        prompt_list += f'<｜Assistant｜><think>'
+        if WORK == 4:
+            prompt_list += f'### 分析\n1. **俚语分析**：\n{paragraph_1}\n2. **语义分析**：\n{paragraph_2}\n'
+            prompt_list += f'3. **歧视片段提取**：\n{paragraph_3}\n</think>'
+            prompt_list += f'**歧视片段json输出**：\n```json\n{{\n\t\"歧视片段\": {Argument},\n}}\n````<｜end▁of▁sentence｜>'
+    elif WORK == 5 or WORK == 51:
+        prompt_list += f"从给出的‘社交媒体发言’中提取出作者发表主观评论的‘评论目标’以及对应的‘评论片段’，必须是文中成分，成对输出。"
+        prompt_list += f"输出以下段落：1.评论目标识别、2.评论片段识别\n"
+        prompt_list += f"目标-片段组合json List输出,模板:[{{\n\t\"评论目标\": String,\n\t\"评论片段\": String\n}},...]\n"
+        prompt_list += f"社交媒体发言:{content}\n"
+        prompt_list += f'<｜Assistant｜><think>'
+        if WORK == 5:
+            prompt_list += f'### 分析\n1. **评论目标识别**：\n{paragraph_1}\n2. **评论片段识别**：\n{paragraph_2}\n'
+            prompt_list += f'**目标-片段组合json List输出**：\n```json\n[{target}]\n````<｜end▁of▁sentence｜>'
+    elif WORK == 6 or WORK == 61:
+        prompt_list += f"给出的‘社交媒体发言’中作者对‘歧视目标’发表了歧视言论，判断作者对该目标的'歧视类型'(种族歧视/同性恋歧视/艾滋病歧视/地域歧视/性别歧视)。\n"
+        prompt_list += f"输出以下段落：1.俚语分析、2.语义分析、3.歧视类型判断。\n"
+        prompt_list += f"最后歧视类型json List输出，模板:[\n\t'歧视类型 String',\n\t...\n]\n"
+        prompt_list += f"社交媒体发言:{content}\n"
+        prompt_list += f'<｜Assistant｜><think>'
+        if WORK == 6:
+            prompt_list += f'### 分析\n1. **俚语分析**：\n{paragraph_1}\n2. **语义分析**：\n{paragraph_2}\n'
+            prompt_list += f'3. **歧视类型判断**：\n{paragraph_3}\n</think>'
+            prompt_list += f'**歧视类型json List输出**：\n```json\n[{target}]\n````<｜end▁of▁sentence｜>'
     elif WORK == 12 or WORK == 121:
-        prompt_list += '<｜User｜>'
         prompt_list +=  f"分析'社交媒体发言'使用俚语的含义。\n社交媒体发言:{content}\n"
-        # prompt_list.append({
-            # "role": "user",
-            # "content": f"分析'社交媒体发言'使用俚语的含义。\n社交媒体发言:{content}\n",
-        # })
         prompt_list += '<｜Assistant｜>'
         if WORK == 12:
             prompt_list += f'**俚语分析**：\n{paragraph_1}<｜end▁of▁sentence｜>'
-            # prompt_list.append({
-            #     "role": "assistant",
-            #     "content": f'**俚语分析**：\n{paragraph_1}'
-            # })
     elif WORK == 13:
-        prompt_list += '<｜User｜>'
         prompt_list +=  f"分析'社交媒体发言'使用俚语的含义。\n社交媒体发言:{content}\n"
-        # prompt_list.append({
-            # "role": "user",
-            # "content": f"分析'社交媒体发言'使用俚语的含义。\n社交媒体发言:{content}\n",
-        # })
         cout = cout_slang_replace(content)
         if cout == '':
             return None
         prompt_list += '<｜Assistant｜>'
         prompt_list += f'**俚语分析**：\n{cout}<｜end▁of▁sentence｜>'
-        # prompt_list.append({
-            # "role": "assistant",
-            # "content": f'**俚语分析**：\n{cout}'
-        # })
     return prompt_list
 
-def assembly_prompt(content,work):
+def prompt_dict(content,work):
     if work == 1:
         prompt = PRO['第一任务']
         prompt += "**任务**\n"
@@ -698,7 +682,7 @@ def create_openai_client(api_key, base_url, proxy=None):
 
 # 默认客户端（不使用代理）
 def OpenAi_api(key,content, work, log=False):
-    prompt = assembly_prompt(content, work)
+    prompt = prompt_dict(content, work)
     client_to_use = create_openai_client(api_key=key,base_url="https://api.deepseek.com")
     # client_to_use = create_openai_client(api_key=key,base_url="https://api.deepseek.com",proxy=proxy)
     response = client_to_use.chat.completions.create(
