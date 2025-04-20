@@ -372,16 +372,21 @@ slang_replace = {
 '饭桶':'谐音反同',
 '反串':'指网络上假装成对立立场的角色',
 }
-
-
-def add_slang_prompt(content):
-    print('已经废弃，已经废弃，已经废弃，已经废弃，已经废弃，已经废弃，已经废弃，已经废弃，已经废弃')
-    exit(0)
-    OUT = ''
-    for key, value in slang.items():
-        if key in content:
-            OUT += "(其中‘" + key + '’是' + value + ")\n"
-    return OUT
+def cout_slang_replace(content):
+    cout = ''
+    content = content.replace('沉默', '').replace('默默', '')
+    for k, v in slang_replace.items():
+        if k in content:
+            cout += "其中‘" + k + '’是' + v + "\n"
+    return cout
+# def add_slang_prompt(content):
+#     print('已经废弃，已经废弃，已经废弃，已经废弃，已经废弃，已经废弃，已经废弃，已经废弃，已经废弃')
+#     exit(0)
+#     OUT = ''
+#     for key, value in slang.items():
+#         if key in content:
+#             OUT += "(其中‘" + key + '’是' + value + ")\n"
+#     return OUT
 
 PRO = {}
 PRO['第一任务'] = """提取句中最核心包含作者主观评论的指代（至少一个，至多两个），再提取句中对该指代评论的关键信息片段，再进行仇恨判断任务，输出‘指代’、‘评论’、‘是否仇恨’（是/否）
@@ -406,7 +411,7 @@ PRO['第四任务'] = """这里提供了一个'提取对某目标的仇恨语句
 从'句子'中抽取出作者对'仇恨目标'表达仇恨的关键'仇恨语句片段'
 **示例**
 """
-PRO['第五任务'] = """这里提供了一个'评价目标、评论片段组合抽取'任务介绍和'输出'，你不需要完成这个任务，根据'输出'去分析的提取过程，输出以下分析段落：1.评论目标识别、2.评论片段识别、3.目标-片段组合json输出。json List输出模板:
+PRO['第五任务'] = """这里提供了一个'评价目标、评论片段组合抽取'任务介绍和'输出'，你不需要完成这个任务，已经给出了答案，，根据'输出'去分析的提取过程，输出以下分析段落：1.评论目标识别、2.评论片段识别、3.目标-片段组合json输出。json List输出模板:
 [
   {
     "评论目标": String,
@@ -418,6 +423,16 @@ PRO['第五任务'] = """这里提供了一个'评价目标、评论片段组合
 从给出的'社交媒体发言'中提取出作者发表主观评论的'评论目标'以及对应的'评论片段'，成对输出。
 **示例**
 """
+PRO['第六任务'] = """这里提供了一个'歧视类型判断'任务介绍和示例，你不需要完成这个任务，已经给出了答案，根据示例去分析的提取过程，输出以下段落：俚语分析、语义分析、歧视类型判断、类型json输出。json List输出模板:
+[
+    '歧视类型 String',
+    ...
+]
+**任务介绍**
+给出的'社交媒体发言'中作者对'评论目标'发表了歧视言论，判断作者对该目标的'歧视类型'(种族歧视/同性恋歧视/艾滋病歧视/地域歧视/性别歧视)。
+**示例**
+"""
+
 # 社交媒体发言：曰本之前已经有很多地方承认同杏伴侣了
 # 输出：
 # [
@@ -620,11 +635,7 @@ def assembly_prompt_dict(id, WORK, content, paragraph_1=None, paragraph_2=None, 
             # "role": "user",
             # "content": f"分析'社交媒体发言'使用俚语的含义。\n社交媒体发言:{content}\n",
         # })
-        cout = ''
-        content = content.replace('沉默', '').replace('默默', '')
-        for k, v in slang_replace.items():
-            if k in content:
-                cout += "其中‘" + k + '’是' + v + "\n"
+        cout = cout_slang_replace(content)
         if cout == '':
             return None
         prompt_list += '<｜Assistant｜>'
@@ -635,25 +646,25 @@ def assembly_prompt_dict(id, WORK, content, paragraph_1=None, paragraph_2=None, 
         # })
     return prompt_list
 
-def assembly_prompt(content,work,isSlang):
+def assembly_prompt(content,work):
     if work == 1:
         prompt = PRO['第一任务']
         prompt += "**任务**\n"
-        if isSlang:
-            prompt += add_slang_prompt(content)
-        user += "\n输入：" + content + '\n输出：'
+        # if isSlang:
+            # prompt += add_slang_prompt(content)
+        user += "\n输入：" + content['content'] + '\n输出：'
     elif work == 2:
         prompt = PRO['第二任务']
         prompt += "**任务**\n"
-        if isSlang:
-            prompt += add_slang_prompt(content['Target'])
+        # if isSlang:
+            # prompt += add_slang_prompt(content['Target'])
         prompt += '评价对象：' + content['Target'] + '\n'
         prompt += '评论内容：' + content['Argument'] + '\n'
         prompt += '原句：' + content['content'] + '\n'
     elif work == 3:
         prompt = PRO['第三任务']
-        prompt += ('输入:' + content + '\n' )
-        prompt += ('输出:' + isSlang )
+        prompt += ('输入:' + content['content'] + '\n' )
+        prompt += ('输出:' + content['Target'] + '\n' )
     elif work == 4:
         prompt = PRO['第四任务']
         prompt += ('句子:' + content['content'] + '\n' )
@@ -663,6 +674,15 @@ def assembly_prompt(content,work,isSlang):
         prompt = PRO['第五任务']
         prompt += ('社交媒体发言：' + content['content'] + '\n' )
         prompt += ('输出：' + str(content['Target_Argument']) + '\n' )
+    elif work == 6:
+        tf = {'Racism':'种族歧视','Region':'地域歧视','Sexism':'性别歧视','LGBTQ':'同性恋歧视','Hivism':'歧视'}
+        hatetype = []
+        for i in content['HateType'].split(','):
+            hatetype.append(tf[i])
+        prompt = PRO['第六任务']
+        prompt += ('社交媒体发言：' + content['content'] + '\n' )
+        prompt += ('评论目标：' + content['Target'] + '\n' )
+        prompt += ('歧视类型：' + str(hatetype) + '\n' )
     else:
         print('work error')
     return prompt
@@ -677,13 +697,10 @@ def create_openai_client(api_key, base_url, proxy=None):
     return OpenAI(**client_kwargs)
 
 # 默认客户端（不使用代理）
-def OpenAi_api(key,content, work, isSlang, log=False,proxy=None):
-    prompt = assembly_prompt(content, work, isSlang)
-    if proxy:
-        client_to_use = create_openai_client(api_key=key,base_url="https://api.deepseek.com",proxy=proxy)
-    else:
-        client_to_use = create_openai_client(api_key=key,base_url="https://api.deepseek.com")
-
+def OpenAi_api(key,content, work, log=False):
+    prompt = assembly_prompt(content, work)
+    client_to_use = create_openai_client(api_key=key,base_url="https://api.deepseek.com")
+    # client_to_use = create_openai_client(api_key=key,base_url="https://api.deepseek.com",proxy=proxy)
     response = client_to_use.chat.completions.create(
         model="deepseek-chat",
         messages=[
@@ -756,12 +773,12 @@ def load_train_byWORKTYPE(filename,WORKTYPY):
                     'id': i_datatemp['id'],
                     'Target': Target,
                 })
-        elif WORKTYPY == 4 or WORKTYPY == 5:
+        elif WORKTYPY == 4 or WORKTYPY == 5 or WORKTYPY == 6:
             datatemp = json.load(file)
             data = []
             for i_datatemp in datatemp:
                 output = output_tf(i_datatemp['output'])
-                if WORKTYPY == 4:
+                if WORKTYPY == 4 or WORKTYPY == 6:
                     for i_output in output:
                         if i_output['Is'] == 'y':
                             data.append({
@@ -769,6 +786,7 @@ def load_train_byWORKTYPE(filename,WORKTYPY):
                                 'id': i_datatemp['id'],
                                 'Target': i_output['Target'],
                                 'Argument': i_output['Argument'],
+                                'HateType': i_output['HateType'],
                             })
                 #5# #5# #5# #5# #5# #5# #5# #5# #5# #5# #5# #5# 
                 elif WORKTYPY == 5:
