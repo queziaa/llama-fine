@@ -1,7 +1,7 @@
 from unsloth import FastLanguageModel, PatchFastRL
 import os
-os.environ["VLLM_USE_V1"] = '0'
-os.environ["TORCHDYNAMO_DISABLE"] = "1"  # 完全禁用dynamo
+# os.environ["VLLM_USE_V1"] = '0'
+# os.environ["TORCHDYNAMO_DISABLE"] = "1"  # 完全禁用dynamo
 import logging
 from datetime import datetime
 from tool import soft_match_score,REWARD
@@ -52,13 +52,13 @@ Reward = REWARD()
 #     LOGLOGfilf.write('仇恨判断输出长度奖励' + str(reward_list) + '\n')
 #     return reward_list
 
-def three_stage(completions, **kwargs):
-    reward_list = []
-    for completion_i in completions:
-        reward_list.append(Reward.three_stage(completion_i))
-    print('三段式思考输出奖励', reward_list)
-    LOGLOGfilf.write('三段式思考输出奖励' + str(reward_list) + '\n')
-    return reward_list
+# def three_stage(completions, **kwargs):
+#     reward_list = []
+#     for completion_i in completions:
+#         reward_list.append(Reward.three_stage(completion_i))
+#     print('三段式思考输出奖励', reward_list)
+#     LOGLOGfilf.write('三段式思考输出奖励' + str(reward_list) + '\n')
+#     return reward_list
 
 # def out_number_matching(completions, target,**kwargs):
 #     reward_list = []
@@ -105,10 +105,9 @@ model, tokenizer = FastLanguageModel.from_pretrained(
     model_name=MODEL_name_or_path,
     load_in_4bit=True,  # 是否以 4 位加载模型，False 表示使用 LoRA 16 位
     # max_lora_rank=model_args.lora_r,  # 设置 LoRA 的最大秩
-    # max_seq_length=training_args.max_completion_length,  # 设置最大序列长度
+    max_seq_length=2048,  # 设置最大序列长度
+    repetition_penalty=1.2,  # 设置重复惩罚
     attn_implementation='flash_attention_2', # 设置注意力实现方式 flash attention
-    # fast_inference=training_args.use_vllm,  # 是否使用 VLLM 进行快速推理
-    # gpu_memory_utilization=training_args.vllm_gpu_memory_utilization,  # GPU 内存利用率，若内存不足可减少
 ) 
 # # PEFT 模型
 # model = FastLanguageModel.get_peft_model(
@@ -135,13 +134,13 @@ model, tokenizer = FastLanguageModel.from_pretrained(
 
 # train_dataset = train_dataset.map(lambda x: generate_r1_prompt(x["prompt"], x["target"]))
 # test_dataset = test_dataset.map(lambda x: generate_r1_prompt(x["prompt"], x["target"]))
-
+training_args.repetition_penalty = 1.2
 trainer = GRPOTrainer(
     model = model,
     processing_class = tokenizer,
     reward_funcs=[
         # len_HateTargetJudgment,
-        three_stage,
+        # three_stage,
         # out_number_matching,
         # intercepted_in_text,
         Final_matching
@@ -153,7 +152,10 @@ trainer = GRPOTrainer(
 logger.info(
     f'*** Starting training {datetime.now().strftime("%Y-%m-%d %H:%M:%S")} for {training_args.num_train_epochs} epochs***'
 )
-train_result = trainer.train()
+
+
+train_result = trainer.train(resume_from_checkpoint=True)  # 自动查找最新的checkpoint
+# train_result = trainer.train()
 
 # metrics = train_result.metrics
 # metrics["train_samples"] = len(train_dataset)

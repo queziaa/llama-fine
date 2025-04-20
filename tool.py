@@ -114,14 +114,12 @@ class REWARD:
             'reward': reward,
             'HateTargetJudgment':HateTargetJudgment
         }
-
-    # def len_HateTargetJudgment(self,completion):
-    #     key = self.key(completion)
-    #     temp = self.ALL[key]['HateTargetJudgment']
-    #     if len(temp) < 6:
-    #         return 0
-    #     return 1
-
+    def len_HateTargetJudgment(self,completion):
+        key = self.key(completion)
+        temp = self.ALL[key]['HateTargetJudgment']
+        if len(temp) < 6:
+            return 0
+        return 1
     #  三段式输出格式奖励
     def three_stage(self,completion):
         key = self.key(completion)
@@ -130,7 +128,6 @@ class REWARD:
         if len(HateTargetJudgment) > 6:
             reward += 1
         return reward / 6
-    
     # 如果目标是list 奖励输出也是list的情况
     def out_number_matching(self,completion,target):
         key = self.key(completion)
@@ -142,7 +139,6 @@ class REWARD:
         if type(json['target']) == str and type(target) == str:
                 return 1
         return 0
-    
     # 输出是否为文中截取
     def intercepted_in_text(self,completion,target):
         key = self.key(completion)
@@ -160,7 +156,6 @@ class REWARD:
             if i in completion:
                 out += 1
         return out / lenss            
-
     def Final_matching(self,completion, target):
         key = self.key(completion)
         json = self.ALL[key]['json']
@@ -187,22 +182,6 @@ class REWARD:
             target = [target]
         return multi_match_score(pr_target, target), pr_target
 
-# def multi_match_score(pr_target, target):
-#     similarity_matrix = []
-#     out = [0] * len(pr_target)
-#     for i in range(len(target)):
-#         for j in range(len(pr_target)):
-#             similarity_matrix.append(soft_match_score(target[i], pr_target[j]))
-
-#     while set(similarity_matrix) != {0}:
-#         maxindex = similarity_matrix.index(max(similarity_matrix))
-#         max_i = maxindex // len(pr_target)
-#         max_j = maxindex % len(pr_target)
-#         out[max_j] = similarity_matrix[maxindex]
-#         for i in range(len(similarity_matrix)):
-#             if i // len(pr_target) == max_i or i % len(pr_target) == max_j:
-#                 similarity_matrix[i] = 0
-#     return sum(out) / len(out)
 def multi_match_score(gold_Target, pred_Target):
     similarity_sum = 0
     similarity_len = 0
@@ -437,37 +416,6 @@ PRO['第六任务'] = """这里提供了一个'歧视类型判断'任务介绍�
 **示例**
 """
 
-# 社交媒体发言：曰本之前已经有很多地方承认同杏伴侣了
-# 输出：
-# [
-#   {
-#     "评论目标": "日本",
-#     "评论片段": "很多地方承认同杏伴侣了"
-#   }
-# ]
-# PRO['3WorkQwenPrompt_instruction_input'] = """<|im_start|>system
-# 进行'仇恨目标'抽取任务，从句子中抽取作者表达仇恨的群体或个人。仇恨评论通常带有贬义、侮辱性或歧视性，针对特定群体或个人。输出以下段落：俚语分析、语义分析、仇恨目标判断、仇恨目标json输出。<|im_end|>
-# <|im_start|>user
-# {}<|im_end|>
-# <|im_start|>assistant
-# """
-# PRO['3WorkQwenPrompt_output'] = """### 分析
-
-# 1. **俚语分析**：
-# {}
-   
-# 2. **语义分析**：
-# {}
-
-# 3. **仇恨目标判断**：
-# {}
-
-# 4. **仇恨目标JSON输出**：
-# ```json
-# {{
-#   "target": {},
-# }}
-# ```<|im_end|>"""
 def mergedParagraph(paragraph):
     temp = ''
     for i in paragraph:
