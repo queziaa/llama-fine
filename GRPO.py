@@ -19,8 +19,31 @@ handler.setFormatter(
 logger.addHandler(handler)
 LOGLOGfilf = open('log.txt', 'a')
 
-Reward = REWARD()
 
+import argparse
+parser = argparse.ArgumentParser(description='Process some integers.')
+parser.add_argument('--MODEL', type=str)
+parser.add_argument('--WORK', type=int)
+parser.add_argument('--WORKFILE', type=str)
+args = parser.parse_args()
+MODEL_name_or_path = args.MODEL
+WORK = args.WORK
+WORKFILE = args.WORKFILE
+
+
+from tool import dataset_DEAL
+seed = 3407
+train_dataset = dataset_DEAL(WORKFILE,WORK)
+
+
+parser = TrlParser((ModelConfig, GRPOConfig))
+model_args, training_args = (parser.parse_args_and_config())
+_, training_args = (parser.parse_args_and_config())
+training_args.output_dir = str(WORK) + 'output'
+
+
+
+Reward = REWARD()
 # def len_HateTargetJudgment(completions, **kwargs):
 #     reward_list = []
 #     for completion_i in completions:
@@ -75,18 +98,17 @@ def Final_matching(completions, **kwargs):
     return reward_list
 
 
-parser = TrlParser((ModelConfig, GRPOConfig))
-model_args, training_args = (parser.parse_args_and_config())
-logger.info(f"Model parameters {model_args}")
+
+# logger.info(f"Model parameters {model_args}")
 logger.info(f"Training/evaluation parameters {training_args}")
 model, tokenizer = FastLanguageModel.from_pretrained(
-    model_name=model_args.model_name_or_path,  # 模型名称或路径
+    model_name=MODEL_name_or_path,
     load_in_4bit=True,  # 是否以 4 位加载模型，False 表示使用 LoRA 16 位
     # max_lora_rank=model_args.lora_r,  # 设置 LoRA 的最大秩
     # max_seq_length=training_args.max_completion_length,  # 设置最大序列长度
-    attn_implementation=model_args.attn_implementation, # 设置注意力实现方式 flash attention
-    fast_inference=training_args.use_vllm,  # 是否使用 VLLM 进行快速推理
-    gpu_memory_utilization=training_args.vllm_gpu_memory_utilization,  # GPU 内存利用率，若内存不足可减少
+    attn_implementation='flash_attention_2', # 设置注意力实现方式 flash attention
+    # fast_inference=training_args.use_vllm,  # 是否使用 VLLM 进行快速推理
+    # gpu_memory_utilization=training_args.vllm_gpu_memory_utilization,  # GPU 内存利用率，若内存不足可减少
 ) 
 # # PEFT 模型
 # model = FastLanguageModel.get_peft_model(
@@ -110,13 +132,6 @@ model, tokenizer = FastLanguageModel.from_pretrained(
             # target
     # }
 
-from tool import dataset_DEAL
-
-
-seed = 3407
-WORK = 31      #  3:仇恨目标搜索微调  31:仇恨目标奖励微调  
-WORKFILE = './DATA/outputnew3CC.json'
-train_dataset = dataset_DEAL(WORKFILE,WORK)
 
 # train_dataset = train_dataset.map(lambda x: generate_r1_prompt(x["prompt"], x["target"]))
 # test_dataset = test_dataset.map(lambda x: generate_r1_prompt(x["prompt"], x["target"]))
