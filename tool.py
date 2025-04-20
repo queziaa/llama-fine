@@ -532,10 +532,10 @@ def assembly_prompt_dict(id, WORK, content, paragraph_1=None, paragraph_2=None, 
     #         })
     elif WORK == 12 or WORK == 121:
         prompt_list += '<｜User｜>'
-        prompt_list +=  f"分析'社交媒体发言'使用俚语的含义。(不要思考)\n社交媒体发言:{content}\n"
+        prompt_list +=  f"分析'社交媒体发言'使用俚语的含义。\n社交媒体发言:{content}\n"
         # prompt_list.append({
             # "role": "user",
-            # "content": f"分析'社交媒体发言'使用俚语的含义。(不要思考)\n社交媒体发言:{content}\n",
+            # "content": f"分析'社交媒体发言'使用俚语的含义。\n社交媒体发言:{content}\n",
         # })
         prompt_list += '<｜Assistant｜>'
         if WORK == 12:
@@ -546,10 +546,10 @@ def assembly_prompt_dict(id, WORK, content, paragraph_1=None, paragraph_2=None, 
             # })
     elif WORK == 13:
         prompt_list += '<｜User｜>'
-        prompt_list +=  f"分析'社交媒体发言'使用俚语的含义。(不要思考)\n社交媒体发言:{content}\n"
+        prompt_list +=  f"分析'社交媒体发言'使用俚语的含义。\n社交媒体发言:{content}\n"
         # prompt_list.append({
             # "role": "user",
-            # "content": f"分析'社交媒体发言'使用俚语的含义。(不要思考)\n社交媒体发言:{content}\n",
+            # "content": f"分析'社交媒体发言'使用俚语的含义。\n社交媒体发言:{content}\n",
         # })
         cout = ''
         content = content.replace('沉默', '').replace('默默', '')
