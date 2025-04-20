@@ -41,6 +41,8 @@ class REWARD:
         return key
     # 处理模型target输出的各种非格式化情况
     def hetarget(self, completion,target):
+        if target == -1:
+            return -1
         if type(target) == list:
             if len(target) == 1:
                 target = target[0]
@@ -48,7 +50,9 @@ class REWARD:
                 return target
         if type(target) != str and target != None:
             print('****************target类型错误')
-            exit(0)
+            print(type(target))
+            print(target)
+            return None
         if target == None or target == '无' or target == 'null' or target == '' or '无明确' in target:
             return None
         if target in completion:
@@ -103,8 +107,8 @@ class REWARD:
                 else:
                     pr_target = json['target']
             json = {'target': self.hetarget(completion,pr_target)}
-        else:
-            json = -1
+            if -1 == json['target']:
+                json = -1
         self.ALL[key] = {
             'json': json,
             'reward': reward,
