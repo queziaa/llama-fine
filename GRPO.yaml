@@ -1,26 +1,23 @@
-# 模型参数
 # use_torch_compile: False
 # model_name_or_path: ./c100u
-model_name_or_path: ./unsloth/DeepSeek-R1-Distill-Qwen-7B-unsloth-bnb-4bit
+model_name_or_path: /llm/归档/3outputnew3CC
 # model_name_or_path: ./unsloth/DeepSeek-R1-Distill-Qwen-1.5B-unsloth-bnb-4bit
 # c100 = Q7_SFT12_4_SFT12_3_SFT3_SFT4_SFT13t_SFT13ts_GRPO12C100
 model_revision: main
 torch_dtype: bfloat16
-lora_r: 128 # Lora 秩数
-lora_alpha: 256 # Lora alpha
-lora_dropout: 0.1 # Lora dropout
+# lora_r: 128 # Lora 秩数
+# lora_alpha: 256 # Lora alpha
+# lora_dropout: 0.1 # Lora dropout
 attn_implementation: flash_attention_2
 bf16: true
 tf32: true
-output_dir: ./c100_GRPO
+output_dir: ./GRPO
 
-# Swanlab 训练流程记录参数
 swanlab: true # 是否开启 Swanlab 
 workspace: queziaa
 project: llama-fine
 experiment_name: GRPO
 
-# 训练参数
 # max_steps: 450 # 最大训练步长
 num_train_epochs: 1 # 训练一轮完整数据集
 per_device_train_batch_size: 1
@@ -33,9 +30,8 @@ lr_scheduler_type: cosine # 学习率衰减方案
 warmup_ratio: 0.03 # 学习率预热比率（对于整个步长），好用！
 seed: 3407 # 随机种子，方便实验复现
 
-# GRPO 算法参数
 beta: 0.001 # KL 惩罚因子，调整过，参见下文介绍
-optim: adamw_torch_fused # 优化器, 8bit加速
+optim: paged_adamw_32bit 
 max_prompt_length: 256 # 输入 prompt 最大长度，本实验基本不会有太大变化
 max_completion_length: 4096 # 输出回答长度，包含推理思维链
 num_generations: 8
@@ -45,7 +41,7 @@ do_sample: true # 是否启用采样
 temperature: 0.7 # 采样温度
 top_p: 0.9 # 采样 top_p
 top_k: 50 # 采样 top_k
-max_grad_norm = 0.1
+max_grad_norm: 0.1
 
 # use_vllm: true # 启用 vllm 来加速推理
 # vllm_gpu_memory_utilization: 0.85

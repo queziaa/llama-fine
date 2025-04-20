@@ -39,7 +39,26 @@ class REWARD:
         if key not in self.ALL:
             self.conut_for(completion,key)
         return key
-    
+    # 处理模型target输出的各种非格式化情况
+    def hetarget(self, completion,target):
+        if type(target) == list:
+            if len(target) == 1:
+                target = target[0]
+            else:
+                return target
+        if type(target) != str and target != None:
+            print('****************target类型错误')
+            exit(0)
+        if target == None or target == '无' or target == 'null' or target == '' or '无明确' in target:
+            return None
+        if target in completion:
+            return target
+        if ',' in target[0]:
+            return target[0].split(',')
+        if '和' in target:
+            return target.split('和')
+        return target
+
     def conut_for(self, completion,key):
         startjson = False
         startHateTargetJudgment = False
@@ -71,24 +90,19 @@ class REWARD:
         if json != '':
             reward += 1
             try:
-                json = eval(json)
+                json = eval(json.replace('null', 'None'))
             except:
                 json = -1
+
+        if json != -1:
             pr_target = -1
-            if 'target'  in json or  '仇恨目标'  in json:
+            if 'target' in json or  '仇恨目标'  in json:
                 reward += 1
                 if '仇恨目标' in json:
                     pr_target = json['仇恨目标']
                 else:
                     pr_target = json['target']
-            if pr_target == '无' or pr_target == 'null' or pr_target == None or pr_target == '' or '无明确' in pr_target:
-                pr_target = None
-            elif type(pr_target) == list and len(pr_target) == 1:
-                if ',' in pr_target[0]:
-                    pr_target = pr_target[0].split(',')
-                else:
-                    pr_target = pr_target[0]
-            json = {'target': pr_target}
+            json = {'target': self.hetarget(completion,pr_target)}
         else:
             json = -1
         self.ALL[key] = {
@@ -97,18 +111,21 @@ class REWARD:
             'HateTargetJudgment':HateTargetJudgment
         }
 
-    def len_HateTargetJudgment(self,completion):
-        key = self.key(completion)
-        temp = self.ALL[key]['HateTargetJudgment']
-        if len(temp) < 6:
-            return 0
-        return 1
-    
+    # def len_HateTargetJudgment(self,completion):
+    #     key = self.key(completion)
+    #     temp = self.ALL[key]['HateTargetJudgment']
+    #     if len(temp) < 6:
+    #         return 0
+    #     return 1
+
     #  三段式输出格式奖励
     def three_stage(self,completion):
         key = self.key(completion)
         reward = self.ALL[key]['reward']
-        return reward / 5
+        HateTargetJudgment = self.ALL[key]['HateTargetJudgment']
+        if len(HateTargetJudgment) > 6:
+            reward += 1
+        return reward / 6
     
     # 如果目标是list 奖励输出也是list的情况
     def out_number_matching(self,completion,target):
@@ -123,14 +140,14 @@ class REWARD:
         return 0
     
     # 输出是否为文中截取
-    def intercepted_in_text(self,completion):
+    def intercepted_in_text(self,completion,target):
         key = self.key(completion)
         json = self.ALL[key]['json']
         if json == -1:
             return 0
         pr_target = json['target']
-        if pr_target == None:
-            return 0
+        if pr_target == target:  #处理 None 或 完全相同的情况
+            return 1
         if type(pr_target) != list:
             pr_target = [pr_target]
         lenss = len(pr_target)
@@ -164,24 +181,59 @@ class REWARD:
             pr_target = [pr_target]
         if type(target) == str:
             target = [target]
-        return reward_list(pr_target, target), pr_target
+        return multi_match_score(pr_target, target), pr_target
 
-def reward_list(pr_target, target):
+# def multi_match_score(pr_target, target):
+#     similarity_matrix = []
+#     out = [0] * len(pr_target)
+#     for i in range(len(target)):
+#         for j in range(len(pr_target)):
+#             similarity_matrix.append(soft_match_score(target[i], pr_target[j]))
+
+#     while set(similarity_matrix) != {0}:
+#         maxindex = similarity_matrix.index(max(similarity_matrix))
+#         max_i = maxindex // len(pr_target)
+#         max_j = maxindex % len(pr_target)
+#         out[max_j] = similarity_matrix[maxindex]
+#         for i in range(len(similarity_matrix)):
+#             if i // len(pr_target) == max_i or i % len(pr_target) == max_j:
+#                 similarity_matrix[i] = 0
+#     return sum(out) / len(out)
+def multi_match_score(gold_Target, pred_Target):
+    similarity_sum = 0
+    similarity_len = 0
     similarity_matrix = []
-    out = [0] * len(pr_target)
-    for i in range(len(target)):
-        for j in range(len(pr_target)):
-            similarity_matrix.append(soft_match_score(target[i], pr_target[j]))
-
-    while set(similarity_matrix) != {0}:
-        maxindex = similarity_matrix.index(max(similarity_matrix))
-        max_i = maxindex // len(pr_target)
-        max_j = maxindex % len(pr_target)
-        out[max_j] = similarity_matrix[maxindex]
-        for i in range(len(similarity_matrix)):
-            if i // len(pr_target) == max_i or i % len(pr_target) == max_j:
-                similarity_matrix[i] = 0
-    return sum(out) / len(out)
+    for gold in gold_Target:
+        row = []
+        for pred in pred_Target:
+            score = soft_match_score(gold, pred)
+            row.append(score)
+        similarity_matrix.append(row)
+    matched_gold = set()
+    matched_pred = set()
+    while len(matched_gold) < len(gold_Target) and len(matched_pred) < len(pred_Target):
+        max_score = -1
+        max_i, max_j = -1, -1
+        for i in range(len(gold_Target)):
+            if i in matched_gold:
+                continue
+            for j in range(len(pred_Target)):
+                if j in matched_pred:
+                    continue
+                if similarity_matrix[i][j] > max_score:
+                    max_score = similarity_matrix[i][j]
+                    max_i, max_j = i, j
+        if max_i == -1 or max_j == -1:
+            break
+        matched_gold.add(max_i)
+        matched_pred.add(max_j)
+        similarity_sum += max_score
+        similarity_len += 1
+    unmatched_count = (len(gold_Target) - len(matched_gold)) + (len(pred_Target) - len(matched_pred))
+    similarity_len += unmatched_count
+    if similarity_len == 0:
+        return 0
+    return similarity_sum / similarity_len
 
 ft = {
     'non-hate': 'n',
@@ -403,7 +455,8 @@ def mergedTarget(target):
     else:
         return '"' + target + '"'
 
-def dataset_DEAL(WORKFILENAKE,WORK,seed):
+# def dataset_DEAL(WORKFILENAKE,WORK,seed):
+def dataset_DEAL(WORKFILENAKE,WORK):
     lt_content = []
     lt_paragraph_1 = []
     lt_paragraph_2 = []
@@ -455,22 +508,22 @@ def dataset_DEAL(WORKFILENAKE,WORK,seed):
             if 'Argument' in temp:
                 Argument = temp['Argument']
             prompt_list = assembly_prompt_dict(id, WORK, content, paragraph_1, paragraph_2, paragraph_3, target,Argument)
-            if ((id + seed)%11==0):
-                lt_content.append(content)
-                lt_paragraph_1.append(paragraph_1)
-                lt_paragraph_2.append(paragraph_2)
-                lt_paragraph_3.append(paragraph_3)
-                lt_target.append(target)
-                lt_ids.append(temp['id'])
-                lt_prompt.append(prompt_list),
-            else:
-                l_content.append(content)
-                l_paragraph_1.append(paragraph_1)
-                l_paragraph_2.append(paragraph_2)
-                l_paragraph_3.append(paragraph_3)
-                l_target.append(target)
-                l_ids.append(temp['id'])
-                l_prompt.append(prompt_list),
+            # if ((id + seed)%11==0):
+            #     lt_content.append(content)
+            #     lt_paragraph_1.append(paragraph_1)
+            #     lt_paragraph_2.append(paragraph_2)
+            #     lt_paragraph_3.append(paragraph_3)
+            #     lt_target.append(target)
+            #     lt_ids.append(temp['id'])
+            #     lt_prompt.append(prompt_list),
+            # else:
+            l_content.append(content)
+            l_paragraph_1.append(paragraph_1)
+            l_paragraph_2.append(paragraph_2)
+            l_paragraph_3.append(paragraph_3)
+            l_target.append(target)
+            l_ids.append(temp['id'])
+            l_prompt.append(prompt_list),
     tr_dataset =  Dataset.from_dict({
         "content": l_content,
         "paragraph_1": l_paragraph_1,
@@ -480,16 +533,17 @@ def dataset_DEAL(WORKFILENAKE,WORK,seed):
         "id": l_ids,
         "prompt": l_prompt,
     })
-    ts_dataset = Dataset.from_dict({
-        "content": lt_content,
-        "paragraph_1": lt_paragraph_1,
-        "paragraph_2": lt_paragraph_2, 
-        "paragraph_3": lt_paragraph_3,
-        "target": lt_target,
-        "id": lt_ids,
-        "prompt": lt_prompt,
-    })
-    return tr_dataset, ts_dataset
+    # ts_dataset = Dataset.from_dict({
+    #     "content": lt_content,
+    #     "paragraph_1": lt_paragraph_1,
+    #     "paragraph_2": lt_paragraph_2, 
+    #     "paragraph_3": lt_paragraph_3,
+    #     "target": lt_target,
+    #     "id": lt_ids,
+    #     "prompt": lt_prompt,
+    # })
+    # return tr_dataset, ts_dataset
+    return tr_dataset
 
 def assembly_prompt_dict(id, WORK, content, paragraph_1=None, paragraph_2=None, paragraph_3=None, target=None,Argument=None):
     prompt_list = ''
