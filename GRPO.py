@@ -4,7 +4,9 @@ import os
 # os.environ["TORCHDYNAMO_DISABLE"] = "1"  # 完全禁用dynamo
 import logging
 from datetime import datetime
-from tool import soft_match_score,REWARD
+from tool import REWARD
+import argparse
+from tool import dataset_DEAL
 # from swanlab.integration.transformers import SwanLabCallback
 # os.environ["SWANLAB_MODE"] = "disabled"
 PatchFastRL("GRPO", FastLanguageModel)  # 对 TRL 进行补丁处理
@@ -18,9 +20,9 @@ handler.setFormatter(
 ) 
 logger.addHandler(handler)
 LOGLOGfilf = open('log.txt', 'a')
+seed = 3407
 
 
-import argparse
 parser = argparse.ArgumentParser(description='Process some integers.')
 parser.add_argument('--MODEL', type=str)
 parser.add_argument('--WORK', type=int)
@@ -29,10 +31,6 @@ args = parser.parse_args()
 MODEL_name_or_path = args.MODEL
 WORK = args.WORK
 WORKFILE = args.WORKFILE
-
-
-from tool import dataset_DEAL
-seed = 3407
 train_dataset = dataset_DEAL(WORKFILE,WORK)
 
 
@@ -40,9 +38,6 @@ parser = TrlParser((ModelConfig, GRPOConfig))
 model_args, training_args = (parser.parse_args_and_config())
 _, training_args = (parser.parse_args_and_config())
 training_args.output_dir = str(WORK) + 'output'
-
-
-
 Reward = REWARD()
 # def len_HateTargetJudgment(completions, **kwargs):
 #     reward_list = []
