@@ -31,8 +31,9 @@ def soft_match_score(pred_Target , gold_Target, pred_Argument=None, gold_Argumen
 
 
 class REWARD:
-    def __init__(self):
+    def __init__(self,work):
         self.ALL = {}
+        self.work = work
 
     def key(self, completion):
         key = completion[:100] + str(len(completion))
@@ -40,9 +41,11 @@ class REWARD:
             self.conut_for(completion,key)
         return key
     # 处理模型target输出的各种非格式化情况
-    def hetarget(self, completion,target):
+    def hetarget(self, completion,target):            
         if target == -1:
             return -1
+        if work == 4:
+            return target
         if type(target) == list:
             if len(target) == 1:
                 target = target[0]
@@ -72,10 +75,11 @@ class REWARD:
         reward = 0
         for i in completion.split("\n"):
             text = i.replace(" ", "").replace("*", "").replace(".", "").split("：")[0].replace("#", "")
-            if reward < 3 and text.replace(str(reward + 1), "") == format_title[reward]:
-                reward += 1
-            if not startHateTargetJudgment and reward == 2:
-                startHateTargetJudgment = True
+            # if reward < 3 and text.replace(str(reward + 1), "") == format_title[reward]:
+            #     reward += 1
+            # if not startHateTargetJudgment and reward == 2:
+            #     startHateTargetJudgment = True
+
             if not startjson and text == '```json':
                 startjson = True
             elif not startjson and text =='{':
@@ -88,8 +92,8 @@ class REWARD:
                     json += text
                     break
                 json += text
-            if startHateTargetJudgment and reward == 2 and not startjson:
-                            HateTargetJudgment += text
+            # if startHateTargetJudgment and reward == 2 and not startjson:
+                            # HateTargetJudgment += text
 
         if json != '':
             reward += 1
@@ -100,10 +104,12 @@ class REWARD:
 
         if json != -1:
             pr_target = -1
-            if 'target' in json or  '仇恨目标'  in json:
+            if 'target' in json or  '仇恨目标'  in json or '歧视片段' in json:
                 reward += 1
                 if '仇恨目标' in json:
                     pr_target = json['仇恨目标']
+                elif '歧视片段' in json:
+                    pr_target = json['歧视片段']
                 else:
                     pr_target = json['target']
             json = {'target': self.hetarget(completion,pr_target)}
@@ -453,6 +459,7 @@ def dataset_DEAL(WORKFILENAKE,WORK):
     l_target = []
     l_ids = []
     l_prompt = []
+    l_Argument = []
     if WORK == 13:
         with open(WORKFILENAKE, 'r', encoding='utf-8') as file:
             data = json.load(file)
@@ -499,6 +506,7 @@ def dataset_DEAL(WORKFILENAKE,WORK):
             #     lt_ids.append(temp['id'])
             #     lt_prompt.append(prompt_list),
             # else:
+            l_Argument.append(Argument)
             l_content.append(content)
             l_paragraph_1.append(paragraph_1)
             l_paragraph_2.append(paragraph_2)
@@ -511,6 +519,7 @@ def dataset_DEAL(WORKFILENAKE,WORK):
         "paragraph_1": l_paragraph_1,
         "paragraph_2": l_paragraph_2, 
         "paragraph_3": l_paragraph_3,
+        "Argument": l_Argument,
         "target": l_target,
         "id": l_ids,
         "prompt": l_prompt,
@@ -532,7 +541,7 @@ def prompt_finetun(id, WORK, content, paragraph_1=None, paragraph_2=None, paragr
     if WORK == 3 or WORK == 31:
         prompt_list += f"从给出的‘社交媒体发言’文中抽取‘仇恨目标’，‘仇恨目标’必须是文中成分，‘仇恨目标’是作者表达仇恨的群体/个人/人称代词，作者没有发表仇恨言论则None。\n"
         prompt_list += f"`依次输出以下思考段落：1.俚语分析、2.语义分析、3.仇恨目标判断。\n"
-        prompt_list += f"最后json输出，模板:{{\"仇恨目标\": List of String or None}}\n"
+        prompt_list += f"json输出，模板:{{\"仇恨目标\": List of String or None}}\n"
         prompt_list += f"社交媒体发言:{content}\n"
         prompt_list += f'<｜Assistant｜><think>'
         if WORK == 3:
@@ -540,10 +549,12 @@ def prompt_finetun(id, WORK, content, paragraph_1=None, paragraph_2=None, paragr
             prompt_list += f'3. **仇恨目标判断**：\n{paragraph_3}\n</think>'
             prompt_list += f'**仇恨目标JSON输出**：\n```json\n{{\n\t\"仇恨目标\": {target},\n}}\n```<｜end▁of▁sentence｜>'
     elif WORK == 4 or WORK == 41:
-        prompt_list += f"从给出的‘社交媒体发言’抽取出作者对‘歧视目标’发表主观歧视看法‘歧视片段’，‘歧视片段’必须是文中成分。"
-        prompt_list += f"输出以下段落：1.俚语分析、2.语义分析、3.歧视片段提取。\n"
-        prompt_list += f"最后json输出，模板:{{\n\t\"歧视片段\": String\n}}\n"
-        prompt_list += f"社交媒体发言:{content}\n"
+        prompt_list += '从给出的‘社交媒体发言’抽取出作者表达歧视的核心动词短语，‘动词短语’必须是文中成分。json输出模板:{"动词短语": String}'
+        # prompt_list += f"从给出的‘社交媒体发言’抽取出作者对‘歧视目标’发表主观歧视看法‘歧视片段’，‘歧视片段’必须是文中成分。"
+        # prompt_list += f"输出以下段落：1.俚语分析、2.语义分析、3.歧视片段提取。"
+        # prompt_list += '‘歧视片段’json输出模板:"歧视片段": String}'
+        prompt_list += f"\n社交媒体发言:{content}\n"
+        prompt_list += f"歧视目标：{target}"
         prompt_list += f'<｜Assistant｜><think>'
         if WORK == 4:
             prompt_list += f'### 分析\n1. **俚语分析**：\n{paragraph_1}\n2. **语义分析**：\n{paragraph_2}\n'

@@ -25,8 +25,8 @@ seed = 3407
 
 parser = TrlParser((ModelConfig, GRPOConfig))
 ALL = {
-    'MODEL': './checkpoint-140',
-    'WORK': '4',
+    'MODEL': './4outputnew4CC',
+    'WORK': '41',
     'WORKFILE': './DATA/outputnew4CC.json',
 }
 
@@ -42,7 +42,7 @@ training_args.output_dir = 'GRPO_check_' + str(WORK)
 
 
 
-Reward = REWARD()
+Reward = REWARD(WORK)
 # def len_HateTargetJudgment(completions, **kwargs):
 #     reward_list = []
 #     for completion_i in completions:
@@ -77,7 +77,10 @@ Reward = REWARD()
 #     return reward_list
 
 def Final_matching(completions, **kwargs):
-    target_list = kwargs["target"]
+    if WORK == '3':
+        target_list = kwargs["target"]
+    else:
+        target_list = kwargs["Argument"]
     reward_list = []
     pr_target_list = []
     for completion_i, target in zip(completions, target_list):
@@ -153,8 +156,8 @@ logger.info(
 )
 
 
-train_result = trainer.train(resume_from_checkpoint=True)  # 自动查找最新的checkpoint
-# train_result = trainer.train()
+# train_result = trainer.train(resume_from_checkpoint=True)  # 自动查找最新的checkpoint
+train_result = trainer.train()
 
 # metrics = train_result.metrics
 # metrics["train_samples"] = len(train_dataset)

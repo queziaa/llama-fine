@@ -1,5 +1,4 @@
 model_name_or_path: pass
-output_dir: psss
 # use_torch_compile: False
 # model_name_or_path: ./c100u
 # model_name_or_path: ./unsloth/DeepSeek-R1-Distill-Qwen-1.5B-unsloth-bnb-4bit
@@ -11,6 +10,7 @@ torch_dtype: bfloat16
 # lora_dropout: 0.1 # Lora dropout
 bf16: true
 tf32: true
+output_dir: psss
 
 swanlab: true # 是否开启 Swanlab 
 workspace: queziaa
