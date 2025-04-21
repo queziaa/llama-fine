@@ -5,7 +5,7 @@ import os
 import logging
 from datetime import datetime
 from tool import REWARD
-import argparse
+os.environ['TORCH_FORCE_NO_WEIGHTS_ONLY_LOAD'] = '1'
 from tool import dataset_DEAL
 # from swanlab.integration.transformers import SwanLabCallback
 # os.environ["SWANLAB_MODE"] = "disabled"
@@ -23,21 +23,25 @@ LOGLOGfilf = open('log.txt', 'a')
 seed = 3407
 
 
-parser = argparse.ArgumentParser(description='Process some integers.')
-parser.add_argument('--MODEL', type=str)
-parser.add_argument('--WORK', type=int)
-parser.add_argument('--WORKFILE', type=str)
-args = parser.parse_args()
-MODEL_name_or_path = args.MODEL
-WORK = args.WORK
-WORKFILE = args.WORKFILE
-train_dataset = dataset_DEAL(WORKFILE,WORK)
-
-
 parser = TrlParser((ModelConfig, GRPOConfig))
+ALL = {
+    'MODEL': './checkpoint-140',
+    'WORK': '4',
+    'WORKFILE': './DATA/outputnew4CC.json',
+}
+
 model_args, training_args = (parser.parse_args_and_config())
 _, training_args = (parser.parse_args_and_config())
-training_args.output_dir = str(WORK) + 'output'
+
+
+MODEL_name_or_path = ALL['MODEL']
+WORK = ALL['WORK']
+WORKFILE = ALL['WORKFILE']
+train_dataset = dataset_DEAL(WORKFILE,WORK)
+training_args.output_dir = 'GRPO_check_' + str(WORK)
+
+
+
 Reward = REWARD()
 # def len_HateTargetJudgment(completions, **kwargs):
 #     reward_list = []
